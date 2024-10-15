@@ -13,13 +13,13 @@ app.get("/", (_: Request, res: Response) => {
 
 const sessionState: Record<string, Session> = {};
 
-app.post("/ussd", (req: Request, res: Response) => {
+app.post("/ussd", async (req: Request, res: Response) => {
   const { text, sessionId } = req.body;
 
   const session: Session = sessionState[sessionId] || { step: 1 };
 
   if (text === "") {
-    const response = handleStep(session, undefined);
+    const response = await handleStep(session, undefined);
     sessionState[sessionId] = session;
     return res.send(response);
   }
@@ -33,7 +33,7 @@ app.post("/ussd", (req: Request, res: Response) => {
       return res.send("END Invalid input.");
     }
 
-    const response = handleStep(session, userInput);
+    const response = await handleStep(session, userInput);
 
     if (response.startsWith("END")) {
       sessionState[sessionId] = session;
@@ -42,7 +42,7 @@ app.post("/ussd", (req: Request, res: Response) => {
   }
 
   sessionState[sessionId] = session;
-  const response = handleStep(session, undefined);
+  const response = await handleStep(session, undefined);
   return res.send(response);
 });
 

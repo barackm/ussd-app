@@ -1,4 +1,4 @@
-import { DynamicFlow } from "./types.ts";
+import { ActionTypeEnum, DynamicFlow } from "./types.ts";
 
 export const dynamicFlow: DynamicFlow = {
   1: {
@@ -10,7 +10,7 @@ export const dynamicFlow: DynamicFlow = {
       3: "Report a Crime",
     },
     nextStep: {
-      1: 2, // Proceed to province selection
+      1: 2,
       2: 2,
       3: 2,
     },
@@ -25,7 +25,7 @@ export const dynamicFlow: DynamicFlow = {
       5: "Western Province",
     },
     nextStep: {
-      1: 3, // Proceed to district selection based on province
+      1: 3,
       2: 3,
       3: 3,
       4: 3,
@@ -38,9 +38,9 @@ export const dynamicFlow: DynamicFlow = {
       1: "Gasabo",
       2: "Kicukiro",
       3: "Nyarugenge",
-    }, // Add more districts based on provinces if needed
+    },
     nextStep: {
-      1: 4, // Proceed to sector selection
+      1: 4,
       2: 4,
       3: 4,
     },
@@ -51,32 +51,50 @@ export const dynamicFlow: DynamicFlow = {
       1: "Remera",
       2: "Kacyiru",
       3: "Gisozi",
-    }, // Add real sectors based on districts
+    },
     nextStep: {
-      1: 5, // Proceed to confirmation
+      1: 5,
       2: 5,
       3: 5,
     },
   },
   5: {
-    prompt: "Please confirm your report:",
+    prompt: (session) => {
+      const incident = session.selectedOptions?.[1]
+        ? dynamicFlow[1].options[session.selectedOptions?.[1]]
+        : "N/A";
+      const province = session.selectedOptions?.[2]
+        ? dynamicFlow[2].options[session.selectedOptions?.[2]]
+        : "N/A";
+      const district = session.selectedOptions?.[3]
+        ? dynamicFlow[3].options[session.selectedOptions?.[3]]
+        : "N/A";
+      const sector = session.selectedOptions?.[4]
+        ? dynamicFlow[4].options[session.selectedOptions?.[4]]
+        : "N/A";
+
+      return `You are about to report a ${incident} in ${province} -> ${district} -> ${sector}. Do you want to confirm?`;
+    },
     options: {
       1: "Confirm",
       2: "Cancel",
     },
     nextStep: {
-      1: 6, // Go to confirmation
-      2: 7, // Go to cancellation
+      1: 6,
+      2: 7,
+    },
+    config: {
+      action: ActionTypeEnum.SEND_REPORT,
     },
   },
   6: {
     prompt: "Thank you! Your report has been submitted.",
     options: {},
-    isFinalStep: true, // Mark as the final step
+    isFinalStep: true,
   },
   7: {
     prompt: "Your report has been canceled.",
     options: {},
-    isFinalStep: true, // Mark as the final step
+    isFinalStep: true,
   },
 };

@@ -1,4 +1,10 @@
-import type { MenuOption, Step, Session } from "./types.ts";
+import {
+  type MenuOption,
+  type Step,
+  type Session,
+  ActionTypeEnum,
+  type ActionConfig,
+} from "./types.ts";
 import { dynamicFlow } from "./data.ts";
 
 export const generateMenuText = (options: MenuOption) => {
@@ -12,16 +18,22 @@ export const buildMenu = (step: Step, session: Session) => {
     return `END Error: Invalid step configuration.`;
   }
 
+  const promptMessage =
+    typeof step.prompt === "function" ? step.prompt(session) : step.prompt;
+
   let menuText = generateMenuText(step.options);
 
   if (session.step !== 1 && !step.isFinalStep) {
     menuText += `\n0. Go Back`;
   }
 
-  return `CON ${step.prompt}\n${menuText}`;
+  return `CON ${promptMessage}\n${menuText}`;
 };
 
-export const handleStep = (session: Session, userInput?: number): string => {
+export const handleStep = async (
+  session: Session,
+  userInput?: number
+): Promise<string> => {
   const currentStep = dynamicFlow[session.step];
 
   if (!currentStep) {
@@ -45,11 +57,16 @@ export const handleStep = (session: Session, userInput?: number): string => {
 
     session.step = currentStep.nextStep?.[userInput] || session.step;
 
+    if (currentStep.config?.action) {
+      await executeAction(currentStep.config, session);
+    }
+
     if (dynamicFlow[session.step]?.isFinalStep) {
       return `END ${dynamicFlow[session.step].prompt}`;
     }
 
-    return buildMenu(dynamicFlow[session.step], session);
+    const nextStep = dynamicFlow[session.step];
+    return buildMenu(nextStep, session);
   }
 
   return `CON Invalid input. ${currentStep.prompt}\n${generateMenuText(
@@ -61,4 +78,19 @@ export const stepHandlers = {
   processStep: (session: Session, userInput: number) => {
     return handleStep(session, userInput);
   },
+};
+
+export const executeAction = async (config: ActionConfig, session: Session) => {
+  switch (config.action) {
+    case ActionTypeEnum.SEND_REPORT:
+      console.log(
+        `Log Action:`,
+        config.params?.message || "No message",
+        session
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      break;
+    default:
+      console.log("Unknown action type");
+  }
 };
