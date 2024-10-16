@@ -61,7 +61,7 @@ export const dynamicFlow: DynamicFlow = {
       "3": "southernProvince",
       "4": "easternProvince",
       "5": "westernProvince",
-      "0": "goBack",
+      "00": "goBack",
     },
     nextStep: {
       "1": "3",
@@ -69,7 +69,7 @@ export const dynamicFlow: DynamicFlow = {
       "3": "3",
       "4": "3",
       "5": "3",
-      "0": "1",
+      "00": "1",
     },
   },
   "3": {

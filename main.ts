@@ -25,8 +25,7 @@ app.post("/ussd", async (req: Request, res: Response) => {
   };
 
   console.log("Session:", session, text);
-  // sampleApp
-  const appData = sampleApp;
+  const appData = dynamicFlow;
 
   if (text === "") {
     const response = await handleStep(appData, session, undefined);
@@ -35,24 +34,22 @@ app.post("/ussd", async (req: Request, res: Response) => {
   }
 
   const inputs = text.split("*");
+  const lastInput = inputs[inputs.length - 1];
 
-  for (const input of inputs) {
-    const userInput = input;
+  const userInput = parseInt(lastInput, 10);
 
-    if (isNaN(userInput)) {
-      return res.send("END Invalid input.");
-    }
+  if (isNaN(userInput)) {
+    return res.send("END Invalid input.");
+  }
 
-    const response = await handleStep(appData, session, userInput);
+  const response = await handleStep(appData, session, userInput.toString());
 
-    if (response.startsWith("END")) {
-      sessionState[sessionId] = session;
-      return res.send(response);
-    }
+  if (response.startsWith("END")) {
+    sessionState[sessionId] = session;
+    return res.send(response);
   }
 
   sessionState[sessionId] = session;
-  const response = await handleStep(appData, session, undefined);
   return res.send(response);
 });
 
