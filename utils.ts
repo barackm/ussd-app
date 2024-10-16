@@ -4,8 +4,10 @@ import {
   type Session,
   ActionTypeEnum,
   type ActionConfig,
+  type Language,
 } from "./types.ts";
 import { dynamicFlow } from "./data.ts";
+import { translations } from "./translations.ts";
 
 export const generateMenuText = (options: MenuOption) => {
   return Object.entries(options)
@@ -14,25 +16,31 @@ export const generateMenuText = (options: MenuOption) => {
 };
 
 export const buildMenu = (step: Step, session: Session) => {
-  if (!step || !step.options) {
-    return `END Error: Invalid step configuration.`;
+  const language = session.language || "en";
+  const translation = translations[language];
+
+  let prompt: string;
+
+  if (typeof step.prompt === "string") {
+    prompt = translation[step.prompt];
+  } else if (typeof step.prompt === "function") {
+    prompt = step.prompt(session);
+  } else {
+    throw new Error("Invalid prompt type.");
   }
 
-  const promptMessage =
-    typeof step.prompt === "function" ? step.prompt(session) : step.prompt;
+  const keys = Object.getOwnPropertyNames(step.options);
 
-  let menuText = generateMenuText(step.options);
+  const optionsText = keys
+    .map((key) => `${key}. ${translation[step.options[key]]}`)
+    .join("\n");
 
-  if (session.step !== 1 && !step.isFinalStep) {
-    menuText += `\n0. Go Back`;
-  }
-
-  return `CON ${promptMessage}\n${menuText}`;
+  return `CON ${prompt}\n${optionsText}`;
 };
 
 export const handleStep = async (
   session: Session,
-  userInput?: number
+  userInput?: string
 ): Promise<string> => {
   const currentStep = dynamicFlow[session.step];
 
@@ -44,12 +52,6 @@ export const handleStep = async (
     return buildMenu(currentStep, session);
   }
 
-  if (userInput === 0 && session.previousStep) {
-    session.step = session.previousStep;
-    session.previousStep = null;
-    return buildMenu(dynamicFlow[session.step], session);
-  }
-
   if (userInput in currentStep.options) {
     session.previousStep = session.step;
     session.selectedOptions = session.selectedOptions || {};
@@ -58,7 +60,7 @@ export const handleStep = async (
     session.step = currentStep.nextStep?.[userInput] || session.step;
 
     if (currentStep.config?.action) {
-      await executeAction(currentStep.config, session);
+      await executeAction(currentStep.config, session, userInput);
     }
 
     if (dynamicFlow[session.step]?.isFinalStep) {
@@ -75,12 +77,16 @@ export const handleStep = async (
 };
 
 export const stepHandlers = {
-  processStep: (session: Session, userInput: number) => {
+  processStep: (session: Session, userInput: string) => {
     return handleStep(session, userInput);
   },
 };
 
-export const executeAction = async (config: ActionConfig, session: Session) => {
+export const executeAction = async (
+  config: ActionConfig,
+  session: Session,
+  userInput: string
+) => {
   switch (config.action) {
     case ActionTypeEnum.SEND_REPORT:
       console.log(
@@ -90,6 +96,13 @@ export const executeAction = async (config: ActionConfig, session: Session) => {
       );
       await new Promise((resolve) => setTimeout(resolve, 1000));
       break;
+    case ActionTypeEnum.CHANGE_LANGUAGE: {
+      const language = config.params?.languageMap?.[userInput];
+      if (language) {
+        session.language = language as Language;
+      }
+      break;
+    }
     default:
       console.log("Unknown action type");
   }

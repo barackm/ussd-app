@@ -27,7 +27,7 @@ app.post("/ussd", async (req: Request, res: Response) => {
   const inputs = text.split("*");
 
   for (const input of inputs) {
-    const userInput = parseInt(input, 10);
+    const userInput = input;
 
     if (isNaN(userInput)) {
       return res.send("END Invalid input.");
