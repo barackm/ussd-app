@@ -35,6 +35,18 @@ export const translations = {
     swahili: "Swahili",
     kinyarwanda: "Kinyarwanda",
     goBack: "Go Back",
+
+    // Sample app
+    app2Welcome: "Welcome to the Sample App!",
+    checkBalance: "Check Balance",
+    updateDetails: "Update Details",
+    yourBalance: "Your balance is {balance}.",
+    backToMainMenu: "Back to Main Menu",
+    updateDetailsPrompt: "Please enter your new details:",
+    updatePhoneNumber: "Update Phone Number",
+    updateEmail: "Update Email",
+    enterNewPhoneNumber: "Enter your new phone number:",
+    enterNewEmail: "Enter your new email:",
   },
   fr: {
     welcome:
@@ -73,6 +85,18 @@ export const translations = {
     kinyarwanda: "Kinyarwanda",
 
     goBack: "Retour",
+
+    // Sample app
+    app2Welcome: "Bienvenue dans l'application d'exemple !",
+    checkBalance: "Vérifier le solde",
+    updateDetails: "Mettre à jour les détails",
+    yourBalance: "Votre solde est de {balance}.",
+    backToMainMenu: "Retour au menu principal",
+    updateDetailsPrompt: "Veuillez saisir vos nouveaux détails :",
+    updatePhoneNumber: "Mettre à jour le numéro de téléphone",
+    updateEmail: "Mettre à jour l'e-mail",
+    enterNewPhoneNumber: "Entrez votre nouveau numéro de téléphone :",
+    enterNewEmail: "Entrez votre nouvel e-mail :",
   },
   sw: {
     welcome:
@@ -111,6 +135,18 @@ export const translations = {
     kinyarwanda: "Kinyarwanda",
 
     goBack: "Rudi",
+
+    // Sample app
+    app2Welcome: "Karibu kuja kwenye Programu ya Mfano!",
+    checkBalance: "Angalia Salio",
+    updateDetails: "Sasisha Maelezo",
+    yourBalance: "Salio lako ni {balance}.",
+    backToMainMenu: "Rudi kwenye Menyu Kuu",
+    updateDetailsPrompt: "Tafadhali ingiza maelezo mapya yako:",
+    updatePhoneNumber: "Sasisha Namba ya Simu",
+    updateEmail: "Sasisha Barua pepe",
+    enterNewPhoneNumber: "Ingiza namba yako mpya ya simu:",
+    enterNewEmail: "Ingiza barua pepe yako mpya:",
   },
   rw: {
     welcome:
@@ -149,6 +185,18 @@ export const translations = {
     kinyarwanda: "Ikinyarwanda",
 
     goBack: "Subira",
+
+    // Sample app
+    app2Welcome: "Murakaza neza muri Programu ya Mfano!",
+    checkBalance: "Emeza Saldo",
+    updateDetails: "Hindura Ijambo",
+    yourBalance: "Saldo yawe ni {balance}.",
+    backToMainMenu: "Subira kuri Menyu Kubwa",
+    updateDetailsPrompt: "Nyamuneka andika ijambo ryawe rishya:",
+    updatePhoneNumber: "Hindura Nimero ya Telefoni",
+    updateEmail: "Hindura Imeyili",
+    enterNewPhoneNumber: "Andika nimero yawe ya telefoni:",
+    enterNewEmail: "Andika imeyili yawe:",
   },
 };
 

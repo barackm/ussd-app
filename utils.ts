@@ -5,6 +5,7 @@ import {
   ActionTypeEnum,
   type ActionConfig,
   type Language,
+  type DynamicFlow,
 } from "./types.ts";
 import { dynamicFlow } from "./data.ts";
 import { translations } from "./translations.ts";
@@ -39,10 +40,11 @@ export const buildMenu = (step: Step, session: Session) => {
 };
 
 export const handleStep = async (
+  menuData: DynamicFlow,
   session: Session,
   userInput?: string
 ): Promise<string> => {
-  const currentStep = dynamicFlow[session.step];
+  const currentStep = menuData[session.step];
 
   if (!currentStep) {
     return `END Error: Invalid step configuration.`;
@@ -77,8 +79,8 @@ export const handleStep = async (
 };
 
 export const stepHandlers = {
-  processStep: (session: Session, userInput: string) => {
-    return handleStep(session, userInput);
+  processStep: (menuData: DynamicFlow, session: Session, userInput: string) => {
+    return handleStep(menuData, session, userInput);
   },
 };
 

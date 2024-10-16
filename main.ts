@@ -2,6 +2,7 @@ import express from "npm:express@4.18.2";
 import type { Session } from "./types.ts";
 import { Request, Response } from "npm:express@4.18.2";
 import { handleStep } from "./utils.ts";
+import { dynamicFlow, sampleApp } from "./data.ts";
 
 const app = express();
 app.use(express.json());
@@ -24,9 +25,11 @@ app.post("/ussd", async (req: Request, res: Response) => {
   };
 
   console.log("Session:", session, text);
+  // sampleApp
+  const appData = sampleApp;
 
   if (text === "") {
-    const response = await handleStep(session, undefined);
+    const response = await handleStep(appData, session, undefined);
     sessionState[sessionId] = session;
     return res.send(response);
   }
@@ -40,7 +43,7 @@ app.post("/ussd", async (req: Request, res: Response) => {
       return res.send("END Invalid input.");
     }
 
-    const response = await handleStep(session, userInput);
+    const response = await handleStep(appData, session, userInput);
 
     if (response.startsWith("END")) {
       sessionState[sessionId] = session;
@@ -49,7 +52,7 @@ app.post("/ussd", async (req: Request, res: Response) => {
   }
 
   sessionState[sessionId] = session;
-  const response = await handleStep(session, undefined);
+  const response = await handleStep(appData, session, undefined);
   return res.send(response);
 });
 

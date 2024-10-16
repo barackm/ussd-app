@@ -153,3 +153,87 @@ export const dynamicFlow: DynamicFlow = {
     },
   },
 };
+
+export const sampleApp: DynamicFlow = {
+  1: {
+    prompt: "app2Welcome",
+    options: {
+      "1": "checkBalance",
+      "2": "updateDetails",
+      "3": "changeLanguage",
+    },
+    nextStep: {
+      "1": "2",
+      "2": "3",
+      "3": "4",
+    },
+  },
+  2: {
+    prompt: "yourBalance",
+    options: {
+      "1": "backToMainMenu",
+    },
+    nextStep: {
+      "1": "1",
+    },
+  },
+  3: {
+    prompt: "updateDetailsPrompt",
+    options: {
+      "1": "updatePhoneNumber",
+      "2": "updateEmail",
+      "00": "backToMainMenu",
+    },
+    nextStep: {
+      "1": "5",
+      "2": "6",
+      "00": "1",
+    },
+  },
+  4: {
+    prompt: "selectLanguage",
+    options: {
+      "1": "english",
+      "2": "french",
+      "3": "swahili",
+      "4": "kinyarwanda",
+      "00": "backToMainMenu",
+    },
+    nextStep: {
+      "1": "1",
+      "2": "1",
+      "3": "1",
+      "4": "1",
+      "00": "1",
+    },
+    config: {
+      action: ActionTypeEnum.CHANGE_LANGUAGE,
+      params: {
+        languageMap: {
+          "1": "en",
+          "2": "fr",
+          "3": "sw",
+          "4": "rw",
+        },
+      },
+    },
+  },
+  5: {
+    prompt: "enterNewPhoneNumber",
+    options: {
+      "1": "backToMainMenu",
+    },
+    nextStep: {
+      "1": "1",
+    }, // Placeholder for handling user input
+  },
+  6: {
+    prompt: "enterNewEmail",
+    options: {
+      "1": "backToMainMenu",
+    },
+    nextStep: {
+      "1": "1",
+    }, // Placeholder for handling user input
+  },
+};
