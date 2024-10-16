@@ -25,7 +25,7 @@ app.post("/ussd", async (req: Request, res: Response) => {
   };
 
   console.log("Session:", session, text);
-  const appData = dynamicFlow;
+  const appData = sampleApp;
 
   if (text === "") {
     const response = await handleStep(appData, session, undefined);
