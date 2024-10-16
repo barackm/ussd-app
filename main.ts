@@ -14,9 +14,16 @@ app.get("/", (_: Request, res: Response) => {
 const sessionState: Record<string, Session> = {};
 
 app.post("/ussd", async (req: Request, res: Response) => {
-  const { text, sessionId } = req.body;
+  const { text, sessionId, serviceCode, phoneNumber, networkCode } = req.body;
 
-  const session: Session = sessionState[sessionId] || { step: 1 };
+  const session: Session = sessionState[sessionId] || {
+    step: 1,
+    phoneNumber,
+    serviceCode,
+    networkCode,
+  };
+
+  console.log("Session:", session, text);
 
   if (text === "") {
     const response = await handleStep(session, undefined);

@@ -35,6 +35,9 @@ export interface Session {
   previousStep?: string | null;
   selectedOptions?: { [stepId: string]: string };
   language: Language;
+  serviceCode: string;
+  phoneNumber: string;
+  networkCode: string;
 }
 
 export interface Options {
