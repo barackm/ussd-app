@@ -133,8 +133,11 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.DogBites]: "Dog Bites",
     },
     nextStep: (userInput) => {
+      const selectedOptionText = (incidentReport[StepEnum.IncidentSelection]?.options as Record<string, string>)?.[
+        userInput
+      ];
       sessionStore.update({
-        incidentType: userInput,
+        incidentType: selectedOptionText,
       });
       return {
         [OptionEnum.HumanDisease]: StepEnum.AffectedIndividuals,
@@ -154,8 +157,11 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.MoreThanTenIndividuals]: "More than 10 Individuals",
     },
     nextStep: (userInput: string) => {
+      const selectedOptionText = (incidentReport[StepEnum.AffectedIndividuals]?.options as Record<string, string>)?.[
+        userInput
+      ];
       sessionStore.update({
-        affectedIndividuals: userInput,
+        affectedIndividuals: selectedOptionText,
       });
 
       return {
@@ -172,10 +178,10 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.Female]: "Female",
     },
     nextStep: (userInput: string) => {
+      const selectedOptionText = (incidentReport[StepEnum.Gender]?.options as Record<string, string>)?.[userInput];
       sessionStore.update({
-        gender: userInput,
+        gender: selectedOptionText,
       });
-
       return {
         [OptionEnum.Male]: StepEnum.Age,
         [OptionEnum.Female]: StepEnum.Age,
@@ -192,7 +198,6 @@ export const incidentReport: DynamicFlow = {
       sessionStore.update({
         age: userInput,
       });
-
       return {
         [OptionEnum.FreeText]: StepEnum.DurationSinceIncident,
       };

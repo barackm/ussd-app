@@ -5,7 +5,11 @@ import { buildMenu, generateMenuText } from "./menuUtils.ts";
 import { executeAction } from "./actionExecutor.ts";
 import { sessionStore } from "../sessionStore.ts";
 
-function resolveNextStep(nextStep: NextStepValue | undefined, userInput: string): string | undefined {
+function resolveNextStep(
+  nextStep: NextStepValue | undefined,
+  userInput: string,
+  option?: OptionEnum,
+): string | undefined {
   if (!nextStep) return undefined;
 
   if (typeof nextStep === "string") {
@@ -14,10 +18,10 @@ function resolveNextStep(nextStep: NextStepValue | undefined, userInput: string)
 
   if (typeof nextStep === "function") {
     const result = nextStep(userInput);
-    return typeof result === "string" ? result : result?.[userInput];
+    return typeof result === "string" ? result : result?.[option || userInput];
   }
 
-  return nextStep[userInput];
+  return nextStep[option || userInput];
 }
 
 const handleNavigation = (menuData: DynamicFlow, userInput: string): string | null => {
@@ -43,10 +47,8 @@ const handleNavigation = (menuData: DynamicFlow, userInput: string): string | nu
 };
 
 const handleAction = async (currentStep: Step, userInput: string): Promise<string | undefined> => {
-  const session = sessionStore.get();
-
   if (currentStep.config?.action) {
-    const res = await executeAction(currentStep.config, session, userInput);
+    const res = await executeAction(currentStep.config, userInput);
     if (!res.success) {
       return `END ${res.message}`;
     }
@@ -75,7 +77,7 @@ export const handleStep = async (menuData: DynamicFlow, userInput?: string): Pro
   }
 
   if (currentStep.expectsInput) {
-    const resolvedNextStep = resolveNextStep(currentStep.nextStep, OptionEnum.FreeText);
+    const resolvedNextStep = resolveNextStep(currentStep.nextStep, userInput, OptionEnum.FreeText);
 
     sessionStore.update({
       previousStep: session.step,

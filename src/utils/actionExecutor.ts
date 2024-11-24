@@ -1,14 +1,15 @@
 import { AlertInsert, alerts } from "../db/alerts.ts";
-import { type ActionConfig, type Session, type Language, ActionTypeEnum } from "../interfaces/types.ts";
+import { type ActionConfig, type Language, ActionTypeEnum } from "../interfaces/types.ts";
+import { sessionStore } from "../sessionStore.ts";
 
 export const executeAction = async (
   config: ActionConfig,
-  session: Session,
   userInput: string,
 ): Promise<{
   success: boolean;
   message?: string;
 }> => {
+  const session = sessionStore.get();
   switch (config.action) {
     case ActionTypeEnum.SEND_ALERT: {
       const _alertData = {
@@ -18,7 +19,12 @@ export const executeAction = async (
         village: session.village,
         reporter_phone: session.phoneNumber,
         incident_type: session.incidentType,
-        details: session.details,
+        details: {
+          age: session.age,
+          duration: session.duration,
+          affected_count: session.affectedIndividuals,
+          gender: session.gender,
+        },
         sector: session.sector,
         affected_count: session.affectedIndividuals,
       } as AlertInsert;

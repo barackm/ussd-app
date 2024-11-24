@@ -1,6 +1,5 @@
 import axios from "npm:axios@1.3.4";
 import _ from "npm:lodash@4.17.21";
-import locationData from './kigaliData.json' with { type: "json" };
 import type { LocationMap, LocationRawData } from "../interfaces/types.ts";
 
 // export const locationMap: LocationMap = {
@@ -188,4 +187,5 @@ export function transformLocationData(rawData: LocationRawData): LocationMap {
   return transformedData;
 }
 
-export const locationMap = transformLocationData(locationData as unknown as LocationRawData);
+const data = await fetchRwandaLocationData();
+export const locationMap = transformLocationData(data as unknown as LocationRawData);
