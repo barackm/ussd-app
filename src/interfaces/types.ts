@@ -48,6 +48,7 @@ export interface Session {
   age?: string;
   gender?: string;
   duration?: string;
+  affectedIndividuals?: string;
 }
 
 export interface Options {
@@ -115,3 +116,6 @@ export type LocationRawData = {
     }>;
   }>;
 };
+
+export type NextStepFunction = (input: string) => Record<string, string> | string;
+export type NextStepValue = string | NextStepFunction | Record<string, string>;

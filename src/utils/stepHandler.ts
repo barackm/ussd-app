@@ -1,9 +1,24 @@
 import { StepEnum } from "../enums/menuKeys.ts";
 import { OptionEnum } from "../enums/menuKeys.ts";
-import { type Step, type DynamicFlow } from "../interfaces/types.ts";
+import { type Step, type DynamicFlow, NextStepValue } from "../interfaces/types.ts";
 import { buildMenu, generateMenuText } from "./menuUtils.ts";
 import { executeAction } from "./actionExecutor.ts";
 import { sessionStore } from "../sessionStore.ts";
+
+function resolveNextStep(nextStep: NextStepValue | undefined, userInput: string): string | undefined {
+  if (!nextStep) return undefined;
+
+  if (typeof nextStep === "string") {
+    return nextStep;
+  }
+
+  if (typeof nextStep === "function") {
+    const result = nextStep(userInput);
+    return typeof result === "string" ? result : result?.[userInput];
+  }
+
+  return nextStep[userInput];
+}
 
 const handleNavigation = (menuData: DynamicFlow, userInput: string): string | null => {
   const session = sessionStore.get();
@@ -60,12 +75,14 @@ export const handleStep = async (menuData: DynamicFlow, userInput?: string): Pro
   }
 
   if (currentStep.expectsInput) {
+    const resolvedNextStep = resolveNextStep(currentStep.nextStep, OptionEnum.FreeText);
+
     sessionStore.update({
       previousStep: session.step,
-      step: currentStep.nextStep?.[OptionEnum.FreeText] || session.step,
+      step: resolvedNextStep || session.step,
     });
 
-    const nextStep = menuData[currentStep.nextStep?.[OptionEnum.FreeText]];
+    const nextStep = menuData[resolvedNextStep as string];
 
     if (nextStep?.isFinalStep) {
       await sessionStore.save();
@@ -79,18 +96,12 @@ export const handleStep = async (menuData: DynamicFlow, userInput?: string): Pro
   const currentOptions = typeof currentStep.options === "function" ? currentStep.options() : currentStep.options;
 
   if (userInput in currentOptions) {
-    const nextStepValue =
-      typeof currentStep.nextStep === "function"
-        ? currentStep.nextStep(userInput)?.[userInput]
-        : typeof currentStep.nextStep === "string"
-        ? currentStep.nextStep
-        : currentStep.nextStep?.[userInput];
+    const nextStepValue = resolveNextStep(currentStep.nextStep, userInput);
 
     sessionStore.update({
       previousStep: session.step,
       step: nextStepValue || session.step,
     });
-
     if (menuData[session.step]?.isFinalStep) {
       await sessionStore.save();
       return `END ${menuData[session.step].prompt}`;

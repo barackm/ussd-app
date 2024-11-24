@@ -20,6 +20,7 @@ export const executeAction = async (
         incident_type: session.incidentType,
         details: session.details,
         sector: session.sector,
+        affected_count: session.affectedIndividuals,
       } as AlertInsert;
 
       await alerts.create(_alertData);
@@ -39,8 +40,6 @@ export const executeAction = async (
       if (!alert) {
         return Promise.resolve({ success: false, message: `Alert with ID ${userInput} was not found` });
       }
-
-      // await alerts.update(alert.id, { status:  });
 
       return Promise.resolve({ success: true });
     }

@@ -153,10 +153,16 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.SixToTenIndividuals]: "6-10 Individuals",
       [OptionEnum.MoreThanTenIndividuals]: "More than 10 Individuals",
     },
-    nextStep: {
-      [OptionEnum.OneToFiveIndividuals]: StepEnum.AdditionalDetails,
-      [OptionEnum.SixToTenIndividuals]: StepEnum.AdditionalDetails,
-      [OptionEnum.MoreThanTenIndividuals]: StepEnum.AdditionalDetails,
+    nextStep: (userInput: string) => {
+      sessionStore.update({
+        affectedIndividuals: userInput,
+      });
+
+      return {
+        [OptionEnum.OneToFiveIndividuals]: StepEnum.Gender,
+        [OptionEnum.SixToTenIndividuals]: StepEnum.Gender,
+        [OptionEnum.MoreThanTenIndividuals]: StepEnum.Gender,
+      };
     },
   },
   [StepEnum.Gender]: {
@@ -180,7 +186,7 @@ export const incidentReport: DynamicFlow = {
     prompt: "Please enter the age:",
     expectsInput: true,
     options: {
-      [OptionEnum.FreeText]: "Enter Age",
+      [OptionEnum.FreeText]: "",
     },
     nextStep: (userInput: string) => {
       sessionStore.update({
@@ -196,7 +202,7 @@ export const incidentReport: DynamicFlow = {
     prompt: "How long ago did the incident occur? (e.g. 2 hours, 1 day):",
     expectsInput: true,
     options: {
-      [OptionEnum.FreeText]: "Enter Duration",
+      [OptionEnum.FreeText]: "",
     },
     nextStep: (userInput: string) => {
       sessionStore.update({
@@ -227,7 +233,7 @@ export const incidentReport: DynamicFlow = {
   [StepEnum.FollowUpAlert]: {
     prompt: "Please enter your alert ID to follow up:",
     options: {
-      [OptionEnum.FreeText]: "Enter Alert ID",
+      [OptionEnum.FreeText]: "",
     },
     expectsInput: true,
     nextStep: {
@@ -257,7 +263,7 @@ export const incidentReport: DynamicFlow = {
   [StepEnum.ConfirmAlertID]: {
     prompt: "Please provide the alert ID to confirm the status:",
     options: {
-      [OptionEnum.FreeText]: "Enter Alert ID",
+      [OptionEnum.FreeText]: "",
     },
     expectsInput: true,
     nextStep: {
