@@ -5,7 +5,6 @@ import { incidentReport } from "../data/data.ts";
 import { handleStep } from "../utils/stepHandler.ts";
 
 const router = express.Router();
-
 const sessionState: Record<string, Session> = {};
 
 router.post("/", async (req: Request, res: Response) => {
@@ -25,19 +24,21 @@ router.post("/", async (req: Request, res: Response) => {
     return res.send(response);
   }
 
-  const inputs = text.split("*");
-  const lastInput = inputs[inputs.length - 1];
+  const inputs = text.split("*").filter(Boolean);
+  let response = "";
 
-  const userInput = lastInput.trim();
+  for (let i = 0; i < inputs.length; i++) {
+    const currentInput = inputs[i].trim();
 
-  const response = await handleStep(appData, session, userInput);
+    response = await handleStep(appData, session, currentInput);
 
-  if (response.startsWith("END")) {
-    sessionState[sessionId] = session;
-    return res.send(response);
+    if (response.startsWith("END") || response.includes("Error:")) {
+      break;
+    }
   }
 
   sessionState[sessionId] = session;
   return res.send(response);
 });
+
 export default router;
