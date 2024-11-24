@@ -29,7 +29,6 @@ export const getDistrictsOptions = (
   const province = locationMap[provinceKey];
 
   if (!province) {
-    console.log("Province not found:", provinceKey);
     return { menuOptions: options, reverseMap };
   }
 

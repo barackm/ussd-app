@@ -21,7 +21,7 @@ export const buildMenu = (step: Step, session: Session) => {
           throw new Error("Invalid prompt type.");
         })();
 
-  const options = typeof step.options === "function" ? step.options(session) : step.options;
+  const options = typeof step.options === "function" ? step.options() : step.options;
   const optionsText = Object.keys(options)
     .map((key) =>
       key === OptionEnum.FreeText

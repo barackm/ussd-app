@@ -1,36 +1,46 @@
 import { StepEnum } from "../enums/menuKeys.ts";
 import { OptionEnum } from "../enums/menuKeys.ts";
-import { type Step, type Session, type DynamicFlow } from "../interfaces/types.ts";
+import { type Step, type DynamicFlow } from "../interfaces/types.ts";
 import { buildMenu, generateMenuText } from "./menuUtils.ts";
 import { executeAction } from "./actionExecutor.ts";
+import { sessionStore } from "../sessionStore.ts";
 
-const handleNavigation = (menuData: DynamicFlow, session: Session, userInput: string) => {
+const handleNavigation = (menuData: DynamicFlow, userInput: string): string | null => {
+  const session = sessionStore.get();
+
   if (userInput === "00") {
-    session.step = StepEnum.MainMenu;
-    return buildMenu(menuData[StepEnum.MainMenu], session);
+    sessionStore.update({
+      step: StepEnum.MainMenu,
+    });
+    return buildMenu(menuData[StepEnum.MainMenu], sessionStore.get());
   }
 
   if (userInput === "0") {
     const currentStepIndex = Object.keys(menuData).findIndex((step) => step === session.step);
     const previousStep = Object.keys(menuData)[currentStepIndex - 1];
-    session.step = previousStep;
-    return buildMenu(menuData[previousStep], session);
+    sessionStore.update({
+      step: previousStep,
+    });
+    return buildMenu(menuData[previousStep], sessionStore.get());
   }
 
   return null;
 };
 
-const handleAction = async (currentStep: Step, session: Session, userInput: string) => {
+const handleAction = async (currentStep: Step, userInput: string): Promise<string | undefined> => {
+  const session = sessionStore.get();
+
   if (currentStep.config?.action) {
     const res = await executeAction(currentStep.config, session, userInput);
     if (!res.success) {
       return `END ${res.message}`;
     }
   }
-  return null;
+  return;
 };
 
-export const handleStep = async (menuData: DynamicFlow, session: Session, userInput?: string): Promise<string> => {
+export const handleStep = async (menuData: DynamicFlow, userInput?: string): Promise<string> => {
+  const session = sessionStore.get();
   const currentStep = menuData[session.step] as any;
 
   if (!currentStep) {
@@ -41,43 +51,53 @@ export const handleStep = async (menuData: DynamicFlow, session: Session, userIn
     return buildMenu(currentStep, session);
   }
 
-  const navigationResult = handleNavigation(menuData, session, userInput);
+  const navigationResult = handleNavigation(menuData, userInput);
   if (navigationResult) return navigationResult;
 
-  const actionResult = await handleAction(currentStep, session, userInput);
-  if (actionResult) return actionResult;
+  const res = await handleAction(currentStep, userInput);
+  if (res) {
+    return res;
+  }
 
   if (currentStep.expectsInput) {
-    session.previousStep = session.step;
-    session.selectedOptions = session.selectedOptions || {};
-    session.selectedOptions[session.step] = userInput;
-    session.step = currentStep.nextStep?.[OptionEnum.FreeText] || session.step;
+    sessionStore.update({
+      previousStep: session.step,
+      step: currentStep.nextStep?.[OptionEnum.FreeText] || session.step,
+    });
+
     const nextStep = menuData[currentStep.nextStep?.[OptionEnum.FreeText]];
 
     if (nextStep?.isFinalStep) {
+      await sessionStore.save();
       return `END ${nextStep.prompt}`;
     }
 
-    return buildMenu(nextStep, session);
+    await sessionStore.save();
+    return buildMenu(nextStep, sessionStore.get());
   }
 
-  const currentOptions = typeof currentStep.options === "function" ? currentStep.options(session) : currentStep.options;
+  const currentOptions = typeof currentStep.options === "function" ? currentStep.options() : currentStep.options;
 
   if (userInput in currentOptions) {
-    session.previousStep = session.step;
-    session.selectedOptions = session.selectedOptions || {};
-    session.selectedOptions[session.step] = userInput;
-
-    session.step =
+    const nextStepValue =
       typeof currentStep.nextStep === "function"
-        ? currentStep.nextStep(session, userInput)
-        : currentStep.nextStep?.[userInput] || session.step;
+        ? currentStep.nextStep(userInput)?.[userInput]
+        : typeof currentStep.nextStep === "string"
+        ? currentStep.nextStep
+        : currentStep.nextStep?.[userInput];
+
+    sessionStore.update({
+      previousStep: session.step,
+      step: nextStepValue || session.step,
+    });
 
     if (menuData[session.step]?.isFinalStep) {
+      await sessionStore.save();
       return `END ${menuData[session.step].prompt}`;
     }
 
-    return buildMenu(menuData[session.step], session);
+    await sessionStore.save();
+    return buildMenu(menuData[session.step], sessionStore.get());
   }
 
   return `CON Invalid input. ${currentStep.prompt}\n${generateMenuText(currentOptions)}`;

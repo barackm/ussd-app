@@ -1,6 +1,6 @@
 // deno-lint-ignore-file
 export enum ActionTypeEnum {
-  SEND_REPORT = "SEND_REPORT",
+  SEND_ALERT = "SEND_REPORT",
   CHANGE_LANGUAGE = "CHANGE_LANGUAGE",
   UPDATE_ALERT_STATUS = "UPDATE_ALERT_STATUS",
   CHECK_ALERT_EXISTENCE = "CHECK_ALERT_EXISTENCE",
@@ -17,8 +17,8 @@ export interface ActionConfig {
 
 export interface Step {
   prompt: any | ((session: Session) => string);
-  options: { [key: string]: string } | ((session: Session) => { [key: string]: string });
-  nextStep?: { [key: string]: string } | ((session: Session, userInput: string) => string);
+  options: { [key: string]: string } | (() => { [key: string]: string });
+  nextStep?: { [key: string]: string } | ((userInput: string) => string | { [key: string]: string });
   config?: ActionConfig;
   isFinalStep?: boolean;
   expectsInput?: boolean;
@@ -34,11 +34,20 @@ export type Language = "en" | "rw";
 export interface Session {
   step: string;
   previousStep?: string | null;
-  selectedOptions?: { [stepId: string]: string };
   language: Language;
   serviceCode: string;
   phoneNumber: string;
   networkCode: string;
+  province: string;
+  district: string;
+  sector: string;
+  cell: string;
+  village: string;
+  incidentType: string;
+  details: string;
+  age?: string;
+  gender?: string;
+  duration?: string;
 }
 
 export interface Options {

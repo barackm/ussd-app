@@ -1,5 +1,6 @@
 import { OptionEnum, StepEnum } from "../enums/menuKeys.ts";
-import { ActionTypeEnum, DynamicFlow, type Session } from "../interfaces/types.ts";
+import { ActionTypeEnum, DynamicFlow } from "../interfaces/types.ts";
+import { sessionStore } from "../sessionStore.ts";
 import {
   getCellsOptions,
   getDistrictsOptions,
@@ -15,86 +16,91 @@ export const locationFlow: DynamicFlow = {
       const { menuOptions } = getProvincesOptions();
       return menuOptions;
     },
-    nextStep: (session: Session, userInput: string) => {
+    nextStep: (userInput: string) => {
       const { reverseMap } = getProvincesOptions();
       const provinceName = reverseMap[userInput];
-      session.selectedOptions = { ...session.selectedOptions, [StepEnum.ProvinceSelection]: provinceName };
+      sessionStore.update({
+        province: provinceName,
+      });
+
       return StepEnum.DistrictSelection;
     },
   },
   [StepEnum.DistrictSelection]: {
     prompt: "Please select your District:",
-    options: (session: Session) => {
-      const { menuOptions } = getDistrictsOptions(session.selectedOptions?.[StepEnum.ProvinceSelection]!);
+    options: () => {
+      const session = sessionStore.get();
+      const selectedProvince = session.province;
+      const { menuOptions } = getDistrictsOptions(selectedProvince!);
       return menuOptions;
     },
-    nextStep: (session: Session, userInput: string) => {
-      const { reverseMap } = getDistrictsOptions(session.selectedOptions?.[StepEnum.ProvinceSelection]!);
+    nextStep: (userInput: string) => {
+      const session = sessionStore.get();
+      const selectedProvince = session.province;
+      const { reverseMap } = getDistrictsOptions(selectedProvince!);
       const districtName = reverseMap[userInput];
-      session.selectedOptions = { ...session.selectedOptions, [StepEnum.DistrictSelection]: districtName };
+
+      sessionStore.update({
+        district: districtName,
+      });
+
       return StepEnum.SectorSelection;
     },
   },
   [StepEnum.SectorSelection]: {
     prompt: "Please select your Sector:",
-    options: (session: Session) => {
-      const { menuOptions } = getSectorsOptions(
-        session.selectedOptions?.[StepEnum.ProvinceSelection]!,
-        session.selectedOptions?.[StepEnum.DistrictSelection]!,
-      );
+    options: () => {
+      const session = sessionStore.get();
+      const { menuOptions } = getSectorsOptions(session.province, session.district);
       return menuOptions;
     },
-    nextStep: (session: Session, userInput: string) => {
-      const { reverseMap } = getSectorsOptions(
-        session.selectedOptions?.[StepEnum.ProvinceSelection]!,
-        session.selectedOptions?.[StepEnum.DistrictSelection]!,
-      );
+    nextStep: (userInput: string) => {
+      const session = sessionStore.get();
+      const { reverseMap } = getSectorsOptions(session.province, session.district);
       const sectorName = reverseMap[userInput];
-      session.selectedOptions = { ...session.selectedOptions, [StepEnum.SectorSelection]: sectorName };
+
+      sessionStore.update({
+        sector: sectorName,
+      });
+
       return StepEnum.CellSelection;
     },
   },
   [StepEnum.CellSelection]: {
     prompt: "Please select your Cell:",
-    options: (session: Session) => {
-      const { menuOptions } = getCellsOptions(
-        session.selectedOptions?.[StepEnum.ProvinceSelection]!,
-        session.selectedOptions?.[StepEnum.DistrictSelection]!,
-        session.selectedOptions?.[StepEnum.SectorSelection]!,
-      );
+    options: () => {
+      const session = sessionStore.get();
+      const { menuOptions } = getCellsOptions(session.province, session.district, session.sector);
       return menuOptions;
     },
-    nextStep: (session: Session, userInput: string) => {
-      const { reverseMap } = getCellsOptions(
-        session.selectedOptions?.[StepEnum.ProvinceSelection]!,
-        session.selectedOptions?.[StepEnum.DistrictSelection]!,
-        session.selectedOptions?.[StepEnum.SectorSelection]!,
-      );
+    nextStep: (userInput: string) => {
+      const session = sessionStore.get();
+      const { reverseMap } = getCellsOptions(session.province, session.district, session.sector);
       const cellName = reverseMap[userInput];
-      session.selectedOptions = { ...session.selectedOptions, [StepEnum.CellSelection]: cellName };
+
+      sessionStore.update({
+        cell: cellName,
+      });
+
       return StepEnum.VillageSelection;
     },
   },
   [StepEnum.VillageSelection]: {
     prompt: "Please select your Village:",
-    options: (session: Session) => {
-      const { menuOptions } = getVillagesOptions(
-        session.selectedOptions?.[StepEnum.ProvinceSelection]!,
-        session.selectedOptions?.[StepEnum.DistrictSelection]!,
-        session.selectedOptions?.[StepEnum.SectorSelection]!,
-        session.selectedOptions?.[StepEnum.CellSelection]!,
-      );
+    options: () => {
+      const session = sessionStore.get();
+      const { menuOptions } = getVillagesOptions(session.province, session.district, session.sector, session.cell);
       return menuOptions;
     },
-    nextStep: (session: Session, userInput: string) => {
-      const { reverseMap } = getVillagesOptions(
-        session.selectedOptions?.[StepEnum.ProvinceSelection]!,
-        session.selectedOptions?.[StepEnum.DistrictSelection]!,
-        session.selectedOptions?.[StepEnum.SectorSelection]!,
-        session.selectedOptions?.[StepEnum.CellSelection]!,
-      );
+    nextStep: (userInput: string) => {
+      const session = sessionStore.get();
+      const { reverseMap } = getVillagesOptions(session.province, session.district, session.sector, session.cell);
       const villageName = reverseMap[userInput];
-      session.selectedOptions = { ...session.selectedOptions, [StepEnum.VillageSelection]: villageName };
+
+      sessionStore.update({
+        village: villageName,
+      });
+
       return StepEnum.IncidentSelection;
     },
   },
@@ -115,7 +121,6 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.ConfirmAlert]: StepEnum.ConfirmAlertID,
       [OptionEnum.ChangeLanguage]: StepEnum.ChangeLanguage,
     },
-    config: { action: ActionTypeEnum.SEND_REPORT },
     isInitialStep: true,
   },
   [StepEnum.IncidentSelection]: {
@@ -127,12 +132,17 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.EbolaLikeSymptoms]: "Ebola-like Symptoms",
       [OptionEnum.DogBites]: "Dog Bites",
     },
-    nextStep: {
-      [OptionEnum.HumanDisease]: StepEnum.AffectedIndividuals,
-      [OptionEnum.HumanDeath]: StepEnum.AffectedIndividuals,
-      [OptionEnum.AnimalDiseaseDeath]: StepEnum.AffectedIndividuals,
-      [OptionEnum.EbolaLikeSymptoms]: StepEnum.AffectedIndividuals,
-      [OptionEnum.DogBites]: StepEnum.AffectedIndividuals,
+    nextStep: (userInput) => {
+      sessionStore.update({
+        incidentType: userInput,
+      });
+      return {
+        [OptionEnum.HumanDisease]: StepEnum.AffectedIndividuals,
+        [OptionEnum.HumanDeath]: StepEnum.AffectedIndividuals,
+        [OptionEnum.AnimalDiseaseDeath]: StepEnum.AffectedIndividuals,
+        [OptionEnum.EbolaLikeSymptoms]: StepEnum.AffectedIndividuals,
+        [OptionEnum.DogBites]: StepEnum.AffectedIndividuals,
+      };
     },
   },
   ...locationFlow,
@@ -149,16 +159,52 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.MoreThanTenIndividuals]: StepEnum.AdditionalDetails,
     },
   },
-  [StepEnum.AdditionalDetails]: {
-    prompt: "Please provide additional information:",
+  [StepEnum.Gender]: {
+    prompt: "Please select the gender:",
     options: {
-      [OptionEnum.Gender]: "Gender (Male/Female)",
-      [OptionEnum.Age]: "Age",
-      [OptionEnum.DurationSinceIncident]: "Duration since the incident",
+      [OptionEnum.Male]: "Male",
+      [OptionEnum.Female]: "Female",
     },
+    nextStep: (userInput: string) => {
+      sessionStore.update({
+        gender: userInput,
+      });
+
+      return {
+        [OptionEnum.Male]: StepEnum.Age,
+        [OptionEnum.Female]: StepEnum.Age,
+      };
+    },
+  },
+  [StepEnum.Age]: {
+    prompt: "Please enter the age:",
     expectsInput: true,
-    nextStep: {
-      [OptionEnum.Gender]: StepEnum.ConfirmReportDetails,
+    options: {
+      [OptionEnum.FreeText]: "Enter Age",
+    },
+    nextStep: (userInput: string) => {
+      sessionStore.update({
+        age: userInput,
+      });
+
+      return {
+        [OptionEnum.FreeText]: StepEnum.DurationSinceIncident,
+      };
+    },
+  },
+  [StepEnum.DurationSinceIncident]: {
+    prompt: "How long ago did the incident occur? (e.g. 2 hours, 1 day):",
+    expectsInput: true,
+    options: {
+      [OptionEnum.FreeText]: "Enter Duration",
+    },
+    nextStep: (userInput: string) => {
+      sessionStore.update({
+        duration: userInput,
+      });
+      return {
+        [OptionEnum.FreeText]: StepEnum.ConfirmReportDetails,
+      };
     },
   },
   [StepEnum.ConfirmReportDetails]: {
@@ -171,7 +217,7 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.ConfirmReport]: StepEnum.ReportSubmission,
       [OptionEnum.CancelReport]: StepEnum.MainMenu,
     },
-    config: { action: ActionTypeEnum.SEND_REPORT },
+    config: { action: ActionTypeEnum.SEND_ALERT },
   },
   [StepEnum.ReportSubmission]: {
     prompt: "Thank you! Your report has been submitted.",

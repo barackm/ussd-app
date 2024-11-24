@@ -9,32 +9,83 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      alerts: {
+        Row: {
+          affected_count: number | null
+          cell: string | null
+          created_at: string
+          details: Json | null
+          district: string | null
+          id: number
+          identifier: string | null
+          incident_type: string | null
+          province: string | null
+          reporter_phone: string | null
+          sector: string | null
+          status: Database["public"]["Enums"]["AlertStatus"] | null
+          updated_at: string | null
+          village: string | null
+        }
+        Insert: {
+          affected_count?: number | null
+          cell?: string | null
+          created_at?: string
+          details?: Json | null
+          district?: string | null
+          id?: number
+          identifier?: string | null
+          incident_type?: string | null
+          province?: string | null
+          reporter_phone?: string | null
+          sector?: string | null
+          status?: Database["public"]["Enums"]["AlertStatus"] | null
+          updated_at?: string | null
+          village?: string | null
+        }
+        Update: {
+          affected_count?: number | null
+          cell?: string | null
+          created_at?: string
+          details?: Json | null
+          district?: string | null
+          id?: number
+          identifier?: string | null
+          incident_type?: string | null
+          province?: string | null
+          reporter_phone?: string | null
+          sector?: string | null
+          status?: Database["public"]["Enums"]["AlertStatus"] | null
+          updated_at?: string | null
+          village?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           email: string
-          first_name: string
+          first_name: string | null
           id: string
-          last_name: string
-          phone: string
+          last_name: string | null
+          phone: string | null
           status: Database["public"]["Enums"]["Status"] | null
         }
         Insert: {
           created_at?: string
           email: string
-          first_name: string
+          first_name?: string | null
           id: string
-          last_name: string
-          phone: string
+          last_name?: string | null
+          phone?: string | null
           status?: Database["public"]["Enums"]["Status"] | null
         }
         Update: {
           created_at?: string
           email?: string
-          first_name?: string
+          first_name?: string | null
           id?: string
-          last_name?: string
-          phone?: string
+          last_name?: string | null
+          phone?: string | null
           status?: Database["public"]["Enums"]["Status"] | null
         }
         Relationships: []
@@ -47,6 +98,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      AlertStatus:
+        | "PENDING"
+        | "FALSE_ALERT"
+        | "IMPROVED"
+        | "WORSENED"
+        | "CONTAINED"
       Status: "PENDING" | "ACTIVE" | "INACTIVE"
     }
     CompositeTypes: {

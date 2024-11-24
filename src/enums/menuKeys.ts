@@ -39,6 +39,9 @@ export enum StepEnum {
   ConfirmAlertStatus = "15",
   AlertStatusUpdated = "16",
   ChangeLanguage = "17",
+  Age = "18",
+  DurationSinceIncident = "19",
+  Gender = "20",
 }
 
 export enum OptionEnum {
@@ -61,8 +64,6 @@ export enum OptionEnum {
   MoreThanTenIndividuals = "3",
 
   // Additional Details
-  Gender = "1",
-  Age = "2",
   DurationSinceIncident = "3",
 
   // Report Actions
@@ -82,6 +83,10 @@ export enum OptionEnum {
   // Language Options
   English = "1",
   Kinyarwanda = "2",
+
+  // Gender
+  Female = "1",
+  Male = "2",
 
   FreeText = "FreeText",
 }
