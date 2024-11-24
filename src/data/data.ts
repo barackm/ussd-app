@@ -181,12 +181,13 @@ export const incidentReport: DynamicFlow = {
   [StepEnum.FollowUpAlert]: {
     prompt: "Please enter your alert ID to follow up:",
     options: {
-      [""]: "Enter Alert ID",
+      [OptionEnum.FreeText]: "Enter Alert ID",
     },
     expectsInput: true,
     nextStep: {
       [OptionEnum.FreeText]: StepEnum.ProvideFollowUpStatus,
     },
+    config: { action: ActionTypeEnum.CHECK_ALERT_EXISTENCE },
   },
   [StepEnum.ProvideFollowUpStatus]: {
     prompt: "Please provide the status of the alert:",
@@ -196,10 +197,16 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.SituationWorsened]: "Situation Worsened",
     },
     nextStep: {
-      [OptionEnum.FalseAlert]: StepEnum.MainMenu,
-      [OptionEnum.SituationImproved]: StepEnum.MainMenu,
-      [OptionEnum.SituationWorsened]: StepEnum.MainMenu,
+      [OptionEnum.FalseAlert]: StepEnum.AlertStatusUpdated,
+      [OptionEnum.SituationImproved]: StepEnum.AlertStatusUpdated,
+      [OptionEnum.SituationWorsened]: StepEnum.AlertStatusUpdated,
     },
+    config: { action: ActionTypeEnum.UPDATE_ALERT_STATUS },
+  },
+  [StepEnum.AlertStatusUpdated]: {
+    prompt: "Thank you! The status of the alert has been updated.",
+    options: {},
+    isFinalStep: true,
   },
   [StepEnum.ConfirmAlertID]: {
     prompt: "Please provide the alert ID to confirm the status:",
@@ -210,6 +217,7 @@ export const incidentReport: DynamicFlow = {
     nextStep: {
       [OptionEnum.FreeText]: StepEnum.ConfirmAlertStatus,
     },
+    config: { action: ActionTypeEnum.CHECK_ALERT_EXISTENCE },
   },
   [StepEnum.ConfirmAlertStatus]: {
     prompt: "Please confirm the alert status:",

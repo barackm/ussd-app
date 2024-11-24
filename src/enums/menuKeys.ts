@@ -37,7 +37,8 @@ export enum StepEnum {
   ProvideFollowUpStatus = "13",
   ConfirmAlertID = "14",
   ConfirmAlertStatus = "15",
-  ChangeLanguage = "16",
+  AlertStatusUpdated = "16",
+  ChangeLanguage = "17",
 }
 
 export enum OptionEnum {
@@ -82,5 +83,5 @@ export enum OptionEnum {
   English = "1",
   Kinyarwanda = "2",
 
-  FreeText = "",
+  FreeText = "FreeText",
 }

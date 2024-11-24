@@ -2,7 +2,7 @@ import express from "npm:express@4.18.2";
 import { Request, Response } from "npm:express@4.18.2";
 import type { Session } from "../interfaces/types.ts";
 import { incidentReport } from "../data/data.ts";
-import { handleStep } from "../utils/utils.ts";
+import { handleStep } from "../utils/stepHandler.ts";
 
 const router = express.Router();
 
