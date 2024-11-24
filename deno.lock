@@ -507,7 +507,20 @@
     "https://deno.land/x/oak@v17.1.0/utils/encode_url.ts": "c0ed6b318eb9523adeebba32eb9acd059c0f94d3511b2b9e3b024722d1b3dfb8",
     "https://deno.land/x/oak@v17.1.0/utils/resolve_path.ts": "aa39d54a003b38fee55f340a0cba3f93a7af85b8ddd5fbfb049a98fc0109b36d",
     "https://deno.land/x/oak@v17.1.0/utils/streams.ts": "3da73b94681f8d27a82cc67df3f91090ec0bd6c3e9ab957af588d41ab585d923",
-    "https://deno.land/x/oak@v17.1.0/utils/type_guards.ts": "a8dbb5ab7424f0355b121537d2454f927e0ca9949262fb67ac4fbefbd5880313"
+    "https://deno.land/x/oak@v17.1.0/utils/type_guards.ts": "a8dbb5ab7424f0355b121537d2454f927e0ca9949262fb67ac4fbefbd5880313",
+    "https://esm.sh/@supabase/supabase-js@2.46.1": "7522e22424839477a66897d868a73e749944f1cccde0405057df615c4986e270",
+    "https://esm.sh/v135/@supabase/auth-js@2.65.1/denonext/auth-js.mjs": "b7135e85481aa3ba832baf45405198e1409629b41d1de593ed2abe1ccd37b1a6",
+    "https://esm.sh/v135/@supabase/functions-js@2.4.3/denonext/functions-js.mjs": "98b9108627bcbb255f1e1d2f8fdc321ca2596a476b76cb8f9109862f1b50ca8c",
+    "https://esm.sh/v135/@supabase/node-fetch@2.6.15/denonext/node-fetch.mjs": "efad00ea3d4cbe1bee688836ef75339d49a1981bc5728a13e9ad5f26791d5efb",
+    "https://esm.sh/v135/@supabase/postgrest-js@1.16.3/denonext/postgrest-js.mjs": "1f0cc477f069386bce1b8c5d6a2357ffd1442299f6423381b2aa2c4652f4af10",
+    "https://esm.sh/v135/@supabase/realtime-js@2.10.7/denonext/realtime-js.mjs": "83480b9b485872eebdbd5cfaf36b87fc943021ccb15f72b55e3548c9c72d9a0e",
+    "https://esm.sh/v135/@supabase/storage-js@2.7.1/denonext/storage-js.mjs": "5ddd96a2213608015badb0778b4a446f641c843e017264978ab1e10f83b3cb21",
+    "https://esm.sh/v135/@supabase/supabase-js@2.46.1/denonext/supabase-js.mjs": "b59ea8f568a984be80c378ef4aea963e72c87dc588df1eb63337b728cbd51f7c",
+    "https://esm.sh/v135/bufferutil@4.0.8/denonext/bufferutil.mjs": "60a4618cbd1a5cb24935c55590b793d4ecb33862357d32e1d4614a0bbb90947f",
+    "https://esm.sh/v135/node-gyp-build@4.6.1/denonext/node-gyp-build.mjs": "5d28b312f145a6cb2ec0dbdd80a7d34c0e0e6b5dcada65411d8bcff6c8991cc6",
+    "https://esm.sh/v135/node-gyp-build@4.8.1/denonext/node-gyp-build.mjs": "cddfc39c5f2d6e228fb1cd8cc36a594d870470b01348f866a7fb4e6f3ed8c66d",
+    "https://esm.sh/v135/utf-8-validate@6.0.4/denonext/utf-8-validate.mjs": "ab4990b545a45f10f7711c69046ee3e9c5b732b9781937f922cefd3fc99d0e88",
+    "https://esm.sh/v135/ws@8.18.0/denonext/ws.mjs": "b4c6f51c7c4d60d2a880889c9b07e00aa367adf20a8304a365cc5e09051a5004"
   },
   "workspace": {
     "dependencies": [
