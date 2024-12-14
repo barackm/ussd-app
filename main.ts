@@ -22,7 +22,6 @@ app.get("/", (_: Request, res: Response) => {
   res.send("Welcome to the AlertHub API");
 });
 
-const port = Deno.env.get("PORT") || "8000";
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+app.listen(8000, () => {
+  console.log("Server running on http://localhost:8000");
 });
