@@ -9,7 +9,7 @@ import { sessionStore } from "../sessionStore.ts";
 const router = express.Router();
 
 router.post("/", sessionMiddleware, async (req: Request, res: Response) => {
-  const { text, sessionId, serviceCode, phoneNumber, networkCode } = req.body;
+  const { text, sessionId, serviceCode, phoneNumber, networkCode, isInitial } = req.body;
   const appData = incidentReport;
 
   try {

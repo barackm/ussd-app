@@ -106,16 +106,12 @@ export interface LocationMap {
     };
   };
 }
+type Villages = string[];
+type CellRecord = Record<string, Villages>;
+type SectorRecord = Record<string, CellRecord[]>;
+type DistrictRecord = Record<string, SectorRecord[]>;
 
-export type LocationRawData = {
-  [province: string]: Array<{
-    [district: string]: Array<{
-      [sector: string]: Array<{
-        [cell: string]: Array<string>;
-      }>;
-    }>;
-  }>;
-};
+export type LocationRawData = Record<string, DistrictRecord[]>;
 
 export type NextStepFunction = (input: string) => Record<string, string> | string;
 export type NextStepValue = string | NextStepFunction | Record<string, string>;

@@ -1,6 +1,6 @@
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.46.1";
 import type { Database } from "../types/types.ts";
-import { load } from "https://deno.land/std@0.208.0/dotenv/mod.ts";
+import { load } from "dotenv";
 
 await load({ export: true });
 
