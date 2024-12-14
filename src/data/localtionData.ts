@@ -155,7 +155,6 @@ export const fetchRwandaLocationData = async (): Promise<LocationRawData> => {
     );
     return kigaliData;
   } catch (error) {
-    console.error("Failed to fetch Rwanda location data:", error);
     throw error;
   }
 };
