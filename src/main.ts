@@ -7,6 +7,7 @@ import location from "./routes/location.ts";
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 const corsOptions = {
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -21,6 +22,7 @@ app.get("/", (_: Request, res: Response) => {
   res.send("Welcome to the AlertHub API");
 });
 
-app.listen(8000, () => {
-  console.log("Server running on http://localhost:8000");
+const port = Deno.env.get("PORT") || "8000";
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
