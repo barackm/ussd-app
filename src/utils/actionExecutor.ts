@@ -1,6 +1,42 @@
 import { AlertInsert, alerts } from "../db/alerts.ts";
+import { getAgentByPhoneNumber } from "../db/agents.ts";
 import { type ActionConfig, type Language, ActionTypeEnum } from "../interfaces/types.ts";
+import { CommunityAgentStatus } from "../types/agents.ts";
 import { sessionStore } from "../sessionStore.ts";
+
+interface AlertValidationResult {
+  success: boolean;
+  message?: string;
+  alert?: any;
+}
+
+async function validateAlertAccess(alertId: string, agentPhone: string): Promise<AlertValidationResult> {
+  const alert = await alerts.getByIdentifier(alertId);
+  if (!alert) {
+    return {
+      success: false,
+      message: `Alert with ID ${alertId} was not found`,
+    };
+  }
+
+  const agent = await getAgentByPhoneNumber(agentPhone);
+  const agentLocation = JSON.parse(agent?.location?.toString() || "{}");
+
+  const normalizeLocation = (str: string | null | undefined): string => (str || "").toLowerCase().trim();
+
+  const village = normalizeLocation(agentLocation.village);
+  const cell = normalizeLocation(agentLocation.cell);
+  const locationMatches = normalizeLocation(alert.village) === village && normalizeLocation(alert.cell) === cell;
+
+  if (!agent || agent.status !== CommunityAgentStatus.ACTIVE || !locationMatches) {
+    return {
+      success: false,
+      message: "You are not authorized to update this alert status",
+    };
+  }
+
+  return { success: true, alert };
+}
 
 export const executeAction = async (
   config: ActionConfig,
@@ -42,22 +78,14 @@ export const executeAction = async (
     }
 
     case ActionTypeEnum.UPDATE_ALERT_STATUS: {
-      const alert = await alerts.getByIdentifier(userInput);
-      if (!alert) {
-        return Promise.resolve({ success: false, message: `Alert with ID ${userInput} was not found` });
-      }
-
-      return Promise.resolve({ success: true });
+      const validation = await validateAlertAccess(userInput, session.phoneNumber);
+      return Promise.resolve(validation);
     }
 
     case ActionTypeEnum.CHECK_ALERT_EXISTENCE: {
-      const alert = await alerts.getByIdentifier(userInput);
-      if (alert) {
-        return Promise.resolve({ success: true });
-      }
-      return Promise.resolve({ success: false, message: `Alert with ID ${userInput} was not found` });
+      const validation = await validateAlertAccess(userInput, session.phoneNumber);
+      return Promise.resolve(validation);
     }
-
     default: {
       return Promise.resolve({ success: false, message: "Unknown action" });
     }

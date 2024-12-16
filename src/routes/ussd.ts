@@ -9,10 +9,14 @@ import { sessionStore } from "../sessionStore.ts";
 const router = express.Router();
 
 router.post("/", sessionMiddleware, async (req: Request, res: Response) => {
-  const { text, sessionId, serviceCode, phoneNumber, networkCode, isInitial } = req.body;
+  const { text, sessionId, serviceCode, phoneNumber, networkCode } = req.body;
   const appData = incidentReport;
 
   try {
+    if (!phoneNumber || !serviceCode || !networkCode) {
+      return res.status(400).send("END Error: Invalid request, provide phoneNumber, serviceCode and networkCode");
+    }
+
     await sessionStore.init(sessionId, {
       phoneNumber,
       serviceCode,

@@ -17,28 +17,37 @@ class SessionStore {
   }
 
   async init(sessionId: string, defaultSessionData?: Partial<Session>): Promise<void> {
-    this.sessionId = sessionId;
-    this.session = await getSession(sessionId);
+    if (!sessionId || typeof sessionId !== "string") {
+      throw new Error("Invalid sessionId provided");
+    }
 
-    if (!this.session && defaultSessionData) {
-      this.session = {
-        step: Object.keys(incidentReport)[0],
-        phoneNumber: "",
-        serviceCode: "",
-        networkCode: "",
-        previousStep: null,
-        language: "en",
-        province: "",
-        district: "",
-        sector: "",
-        cell: "",
-        village: "",
-        incidentType: "",
-        details: "",
-        ...defaultSessionData,
-      };
+    try {
+      this.sessionId = sessionId;
+      this.session = await getSession(sessionId);
 
-      await this.save();
+      if (!this.session && defaultSessionData) {
+        this.session = {
+          step: Object.keys(incidentReport)[0],
+          phoneNumber: "",
+          serviceCode: "",
+          networkCode: "",
+          previousStep: null,
+          language: "en",
+          province: "",
+          district: "",
+          sector: "",
+          cell: "",
+          village: "",
+          incidentType: "",
+          details: "",
+          ...defaultSessionData,
+        };
+
+        await this.save();
+      }
+    } catch (error) {
+      console.error("Session initialization failed:", error);
+      throw new Error(`Failed to initialize session: ${error.message}`);
     }
   }
 

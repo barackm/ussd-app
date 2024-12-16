@@ -11,7 +11,7 @@ export const sessionMiddleware = async (req: Request, res: Response, next: Funct
   try {
     await sessionStore.init(sessionId);
   } catch (error: any) {
-    console.error("Failed to initialize session:", error.message);
+    console.error("+++Failed to initialize session:", error.message);
   }
 
   next();

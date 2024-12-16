@@ -11,7 +11,7 @@ export type Database = {
     Tables: {
       alerts: {
         Row: {
-          affected_count: number | null
+          affected_count: string | null
           cell: string | null
           created_at: string
           details: Json | null
@@ -27,7 +27,7 @@ export type Database = {
           village: string | null
         }
         Insert: {
-          affected_count?: number | null
+          affected_count?: string | null
           cell?: string | null
           created_at?: string
           details?: Json | null
@@ -43,7 +43,7 @@ export type Database = {
           village?: string | null
         }
         Update: {
-          affected_count?: number | null
+          affected_count?: string | null
           cell?: string | null
           created_at?: string
           details?: Json | null
@@ -57,6 +57,36 @@ export type Database = {
           status?: Database["public"]["Enums"]["AlertStatus"] | null
           updated_at?: string | null
           village?: string | null
+        }
+        Relationships: []
+      }
+      community_agents: {
+        Row: {
+          created_at: string
+          first_name: string | null
+          id: number
+          last_name: string | null
+          location: Json | null
+          phone: string
+          status: Database["public"]["Enums"]["Status"] | null
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string | null
+          id?: number
+          last_name?: string | null
+          location?: Json | null
+          phone: string
+          status?: Database["public"]["Enums"]["Status"] | null
+        }
+        Update: {
+          created_at?: string
+          first_name?: string | null
+          id?: number
+          last_name?: string | null
+          location?: Json | null
+          phone?: string
+          status?: Database["public"]["Enums"]["Status"] | null
         }
         Relationships: []
       }
