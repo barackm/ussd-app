@@ -1,10 +1,15 @@
 import express from "npm:express@4.18.2";
 import { Router } from "npm:express@4.18.2";
-import { LocationRawData } from "../interfaces/types.ts";
-import locationData from "../data/kigaliData.json" with { type: "json" };
+import {
+  getCells,
+  getDistricts,
+  getProvinces,
+  getSectors,
+  getVillages,
+  searchByTarget,
+} from "../utils/locationUtils.ts";
 
 const router = Router();
-const data = locationData as unknown as LocationRawData;
 
 interface LocationQuery {
   province?: string;
@@ -12,60 +17,9 @@ interface LocationQuery {
   sector?: string;
   cell?: string;
 }
+const MAX_RESULTS = 5;
 
-function getProvinces(): string[] {
-  return Object.keys(data);
-}
-
-function getDistricts(province: string): string[] {
-  const provinceData = data[province];
-  if (!provinceData?.length) return [];
-  return provinceData.map(district => Object.keys(district)[0]);
-}
-
-function getSectors(district: string): string[] {
-  for (const province of Object.values(data)) {
-    const districtData = province.find(d => Object.keys(d)[0] === district);
-    if (districtData) {
-      const sectors = districtData[district];
-      return sectors.map(sector => Object.keys(sector)[0]);
-    }
-  }
-  return [];
-}
-
-function getCells(sector: string): string[] {
-  for (const province of Object.values(data)) {
-    for (const district of province) {
-      const districtName = Object.keys(district)[0];
-      const sectors = district[districtName];
-      const sectorData = sectors.find(s => Object.keys(s)[0] === sector);
-      if (sectorData) {
-        return Object.keys(sectorData[sector][0]);
-      }
-    }
-  }
-  return [];
-}
-
-function getVillages(cell: string): string[] {
-  for (const province of Object.values(data)) {
-    for (const district of province) {
-      const districtName = Object.keys(district)[0];
-      const sectors = district[districtName];
-      for (const sector of sectors) {
-        const sectorName = Object.keys(sector)[0];
-        const cells = sector[sectorName];
-        for (const cellData of cells) {
-          if (cell in cellData) {
-            return cellData[cell];
-          }
-        }
-      }
-    }
-  }
-  return [];
-}
+type SearchTarget = "province" | "district" | "sector" | "cell" | "village";
 
 router.get("/", (req: express.Request, res: express.Response) => {
   const { province, district, sector, cell } = req.query as LocationQuery;
@@ -86,6 +40,54 @@ router.get("/", (req: express.Request, res: express.Response) => {
     return res.json(getProvinces());
   } catch (error) {
     return res.status(400).json([]);
+  }
+});
+
+router.get("/", (req: express.Request, res: express.Response) => {
+  const { province, district, sector, cell } = req.query as LocationQuery;
+
+  try {
+    if (cell) return res.json(getVillages(cell));
+    if (sector) return res.json(getCells(sector));
+    if (district) return res.json(getSectors(district));
+    if (province) return res.json(getDistricts(province));
+    return res.json(getProvinces());
+  } catch (error) {
+    return res.status(400).json([]);
+  }
+});
+
+router.get("/search", (req: express.Request, res: express.Response) => {
+  const query = req.query.q as string;
+  const target = (req.query.target || "village") as SearchTarget;
+
+  if (!query || query.length < 2) {
+    return res.status(400).json({
+      error: "Search query must be at least 2 characters long",
+    });
+  }
+
+  const validTargets: SearchTarget[] = ["province", "district", "sector", "cell", "village"];
+  if (!validTargets.includes(target)) {
+    return res.status(400).json({
+      error: "Invalid target parameter",
+    });
+  }
+
+  try {
+    const allResults = searchByTarget(query, target);
+    const limitedResults = allResults.slice(0, MAX_RESULTS);
+
+    return res.json({
+      results: limitedResults,
+      total: allResults.length,
+      limit: MAX_RESULTS,
+      target,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: "Failed to search locations",
+    });
   }
 });
 
