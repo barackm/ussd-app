@@ -75,6 +75,7 @@ export enum OptionEnum {
   FalseAlert = "1",
   SituationImproved = "2",
   SituationWorsened = "3",
+  SituationContained = "4",
 
   // Confirm an Alert
   ExaminationContinues = "1",

@@ -1,0 +1,7 @@
+export enum AlertStatus {
+  PENDING = "PENDING",
+  FALSE_ALERT = "FALSE_ALERT",
+  IMPROVED = "IMPROVED",
+  WORSENED = "WORSENED",
+  CONTAINED = "CONTAINED",
+}

@@ -1,8 +1,10 @@
-import { AlertInsert, alerts } from "../db/alerts.ts";
+import { AlertInsert, alerts, AlertUpdate } from "../db/alerts.ts";
 import { getAgentByPhoneNumber } from "../db/agents.ts";
 import { type ActionConfig, type Language, ActionTypeEnum } from "../interfaces/types.ts";
 import { CommunityAgentStatus } from "../types/agents.ts";
 import { sessionStore } from "../sessionStore.ts";
+import { AlertStatus } from "../types/alerts.ts";
+import { incidentReport } from "../data/data.ts";
 
 interface AlertValidationResult {
   success: boolean;
@@ -10,7 +12,7 @@ interface AlertValidationResult {
   alert?: any;
 }
 
-async function validateAlertAccess(alertId: string, agentPhone: string): Promise<AlertValidationResult> {
+async function validateAlertAccess(alertId: number, agentPhone: string): Promise<AlertValidationResult> {
   const alert = await alerts.getByIdentifier(alertId);
   if (!alert) {
     return {
@@ -35,7 +37,7 @@ async function validateAlertAccess(alertId: string, agentPhone: string): Promise
     };
   }
 
-  return { success: true, alert };
+  return { success: true, message: "END Alert status updated successfully" };
 }
 
 export const executeAction = async (
@@ -78,12 +80,31 @@ export const executeAction = async (
     }
 
     case ActionTypeEnum.UPDATE_ALERT_STATUS: {
-      const validation = await validateAlertAccess(userInput, session.phoneNumber);
+      const validation = await validateAlertAccess(session.alertId!, session.phoneNumber);
+
+      if (validation.success) {
+        const stepId = session.step;
+        const stepData = incidentReport[stepId];
+        const optionMappedValues = stepData.optionMappedValues || {};
+        const currentStatus = optionMappedValues[userInput] as AlertStatus;
+
+        try {
+          await alerts.update(session.alertId!, currentStatus);
+        } catch {
+          return Promise.resolve({
+            success: false,
+            message: "Failed to update alert status",
+          });
+        }
+      }
       return Promise.resolve(validation);
     }
 
     case ActionTypeEnum.CHECK_ALERT_EXISTENCE: {
-      const validation = await validateAlertAccess(userInput, session.phoneNumber);
+      const validation = await validateAlertAccess(parseInt(userInput), session.phoneNumber);
+      if (validation.success) {
+        sessionStore.update({ alertId: parseInt(userInput) });
+      }
       return Promise.resolve(validation);
     }
     default: {

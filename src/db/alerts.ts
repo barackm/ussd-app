@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "../lib/supabase.ts";
+import { AlertStatus } from "../types/alerts.ts";
 import type { Database } from "../types/types.ts";
 
 export type Alert = Database["public"]["Tables"]["alerts"]["Row"];
@@ -24,8 +25,15 @@ export const alerts = {
     return data;
   },
 
-  async update(id: number, updates: AlertUpdate) {
-    const { data, error } = await supabaseAdmin.from("alerts").update(updates).eq("id", id).select().single();
+  async update(id: number, status: AlertStatus) {
+    const { data, error } = await supabaseAdmin
+      .from("alerts")
+      .update({
+        status: status,
+      })
+      .eq("identifier", id)
+      .select()
+      .single();
 
     if (error) throw error;
     return data;
@@ -38,7 +46,7 @@ export const alerts = {
     return data;
   },
 
-  async getByIdentifier(identifier: string) {
+  async getByIdentifier(identifier: number) {
     const { data, error } = await supabaseAdmin.from("alerts").select().eq("identifier", identifier);
 
     if (error) throw error;

@@ -23,6 +23,7 @@ export interface Step {
   isFinalStep?: boolean;
   expectsInput?: boolean;
   isInitialStep?: boolean;
+  optionMappedValues?: { [key: string]: string };
 }
 
 export interface DynamicFlow {
@@ -49,6 +50,7 @@ export interface Session {
   gender?: string;
   duration?: string;
   affectedIndividuals?: string;
+  alertId?: number;
 }
 
 export interface Options {

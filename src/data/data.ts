@@ -1,6 +1,7 @@
 import { OptionEnum, StepEnum } from "../enums/menuKeys.ts";
 import { ActionTypeEnum, DynamicFlow } from "../interfaces/types.ts";
 import { sessionStore } from "../sessionStore.ts";
+import { AlertStatus } from "../types/alerts.ts";
 import {
   getCellsOptions,
   getDistrictsOptions,
@@ -252,11 +253,18 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.FalseAlert]: "False Alert",
       [OptionEnum.SituationImproved]: "Situation Improved",
       [OptionEnum.SituationWorsened]: "Situation Worsened",
+      [OptionEnum.SituationContained]: "Situation Contained",
     },
     nextStep: {
       [OptionEnum.FalseAlert]: StepEnum.AlertStatusUpdated,
       [OptionEnum.SituationImproved]: StepEnum.AlertStatusUpdated,
       [OptionEnum.SituationWorsened]: StepEnum.AlertStatusUpdated,
+    },
+    optionMappedValues: {
+      [OptionEnum.FalseAlert]: AlertStatus.FALSE_ALERT,
+      [OptionEnum.SituationImproved]: AlertStatus.IMPROVED,
+      [OptionEnum.SituationWorsened]: AlertStatus.WORSENED,
+      [OptionEnum.SituationContained]: AlertStatus.CONTAINED,
     },
     config: { action: ActionTypeEnum.UPDATE_ALERT_STATUS },
   },
