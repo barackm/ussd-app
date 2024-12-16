@@ -1,10 +1,11 @@
 import { AlertInsert, alerts, AlertUpdate } from "../db/alerts.ts";
-import { getAgentByPhoneNumber } from "../db/agents.ts";
+import { getAgentByPhoneNumber, fetchAgentsByLocation } from "../db/agents.ts";
 import { type ActionConfig, type Language, ActionTypeEnum } from "../interfaces/types.ts";
 import { CommunityAgentStatus } from "../types/agents.ts";
 import { sessionStore } from "../sessionStore.ts";
 import { AlertStatus } from "../types/alerts.ts";
 import { incidentReport } from "../data/data.ts";
+import { sendSMS } from "../lib/twilio.ts";
 
 interface AlertValidationResult {
   success: boolean;
@@ -50,25 +51,48 @@ export const executeAction = async (
   const session = sessionStore.get();
   switch (config.action) {
     case ActionTypeEnum.SEND_ALERT: {
-      const _alertData = {
-        province: session.province,
-        district: session.district,
-        cell: session.cell,
-        village: session.village,
-        reporter_phone: session.phoneNumber,
-        incident_type: session.incidentType,
-        details: {
-          age: session.age,
-          duration: session.duration,
+      try {
+        const _alertData = {
+          province: session.province,
+          district: session.district,
+          cell: session.cell,
+          village: session.village,
+          reporter_phone: session.phoneNumber,
+          incident_type: session.incidentType,
+          details: {
+            age: session.age,
+            duration: session.duration,
+            affected_count: session.affectedIndividuals,
+            gender: session.gender,
+          },
+          sector: session.sector,
           affected_count: session.affectedIndividuals,
-          gender: session.gender,
-        },
-        sector: session.sector,
-        affected_count: session.affectedIndividuals,
-      } as AlertInsert;
+        } as AlertInsert;
 
-      await alerts.create(_alertData);
-      return Promise.resolve({ success: true });
+        const alert = await alerts.create(_alertData);
+        const agents = await fetchAgentsByLocation({
+          cell: alert.cell!,
+          sector: alert.sector!,
+          village: alert.village!,
+        });
+
+        // for (const agent of agents) {
+        const agent = { first_name: "Barack", phone: "0780083122" };
+        const message = `
+🚨 AlertHub: Hi ${agent.first_name}!
+New alert:
+- ID: ${alert.identifier}
+- Sector: ${alert.sector}
+- Cell/Village: ${alert.cell}, ${alert.village}
+- Details: [Codes will be here]
+
+Please follow up and update the status.`;
+        // sendSMS(agent.phone, message);
+        // }
+        return Promise.resolve({ success: true });
+      } catch {
+        return Promise.resolve({ success: false, message: "Failed to send alert" });
+      }
     }
 
     case ActionTypeEnum.CHANGE_LANGUAGE: {

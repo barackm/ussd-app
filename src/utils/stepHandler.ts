@@ -65,6 +65,9 @@ export const handleStep = async (menuData: DynamicFlow, userInput?: string): Pro
   }
 
   if (userInput === undefined) {
+    if (currentStep.isFinalStep) {
+      return `END ${currentStep.prompt}`;
+    }
     return buildMenu(currentStep, session);
   }
 
@@ -85,7 +88,6 @@ export const handleStep = async (menuData: DynamicFlow, userInput?: string): Pro
     });
 
     const nextStep = menuData[resolvedNextStep as string];
-
     if (nextStep?.isFinalStep) {
       await sessionStore.save();
       return `END ${nextStep.prompt}`;
