@@ -90,6 +90,30 @@ export type Database = {
         }
         Relationships: []
       }
+      health_facilities: {
+        Row: {
+          created_at: string
+          id: number
+          location: Json
+          name: string
+          phone: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          location: Json
+          name: string
+          phone: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          location?: Json
+          name?: string
+          phone?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

@@ -1,5 +1,5 @@
 import { OptionEnum, StepEnum } from "../enums/menuKeys.ts";
-import { ActionTypeEnum, DynamicFlow } from "../interfaces/types.ts";
+import { ActionParamTragetEnum, ActionTypeEnum, DynamicFlow } from "../interfaces/types.ts";
 import { sessionStore } from "../sessionStore.ts";
 import { AlertStatus } from "../types/alerts.ts";
 import {
@@ -245,7 +245,12 @@ export const incidentReport: DynamicFlow = {
     nextStep: {
       [OptionEnum.FreeText]: StepEnum.ProvideFollowUpStatus,
     },
-    config: { action: ActionTypeEnum.CHECK_ALERT_EXISTENCE },
+    config: {
+      action: ActionTypeEnum.CHECK_ALERT_EXISTENCE,
+      params: {
+        target: ActionParamTragetEnum.COMMUNITY_WORKER,
+      },
+    },
   },
   [StepEnum.ProvideFollowUpStatus]: {
     prompt: "Please provide the status of the alert:",
@@ -253,7 +258,6 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.FalseAlert]: "False Alert",
       [OptionEnum.SituationImproved]: "Situation Improved",
       [OptionEnum.SituationWorsened]: "Situation Worsened",
-      [OptionEnum.SituationContained]: "Situation Contained",
     },
     nextStep: {
       [OptionEnum.FalseAlert]: StepEnum.AlertStatusUpdated,
@@ -264,9 +268,13 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.FalseAlert]: AlertStatus.FALSE_ALERT,
       [OptionEnum.SituationImproved]: AlertStatus.IMPROVED,
       [OptionEnum.SituationWorsened]: AlertStatus.WORSENED,
-      [OptionEnum.SituationContained]: AlertStatus.CONTAINED,
     },
-    config: { action: ActionTypeEnum.UPDATE_ALERT_STATUS },
+    config: {
+      action: ActionTypeEnum.UPDATE_ALERT_STATUS,
+      params: {
+        target: ActionParamTragetEnum.COMMUNITY_WORKER,
+      },
+    },
   },
   [StepEnum.AlertStatusUpdated]: {
     prompt: "Thank you! The status of the alert has been updated.",
@@ -282,7 +290,12 @@ export const incidentReport: DynamicFlow = {
     nextStep: {
       [OptionEnum.FreeText]: StepEnum.ConfirmAlertStatus,
     },
-    config: { action: ActionTypeEnum.CHECK_ALERT_EXISTENCE },
+    config: {
+      action: ActionTypeEnum.CHECK_ALERT_EXISTENCE,
+      params: {
+        target: ActionParamTragetEnum.HEALTH_FACILITY,
+      },
+    },
   },
   [StepEnum.ConfirmAlertStatus]: {
     prompt: "Please confirm the alert status:",
@@ -291,8 +304,18 @@ export const incidentReport: DynamicFlow = {
       [OptionEnum.DiseaseContained]: "Disease Contained",
     },
     nextStep: {
-      [OptionEnum.ExaminationContinues]: StepEnum.MainMenu,
-      [OptionEnum.DiseaseContained]: StepEnum.MainMenu,
+      [OptionEnum.ExaminationContinues]: StepEnum.AlertStatusUpdated,
+      [OptionEnum.DiseaseContained]: StepEnum.AlertStatusUpdated,
+    },
+    config: {
+      action: ActionTypeEnum.UPDATE_ALERT_STATUS,
+      params: {
+        target: ActionParamTragetEnum.HEALTH_FACILITY,
+      },
+    },
+    optionMappedValues: {
+      [OptionEnum.ExaminationContinues]: AlertStatus.EXAMINATION_CONTINUES,
+      [OptionEnum.DiseaseContained]: AlertStatus.CONTAINED,
     },
   },
   [StepEnum.ChangeLanguage]: {

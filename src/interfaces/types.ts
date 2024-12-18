@@ -6,6 +6,11 @@ export enum ActionTypeEnum {
   CHECK_ALERT_EXISTENCE = "CHECK_ALERT_EXISTENCE",
 }
 
+export enum ActionParamTragetEnum {
+  COMMUNITY_WORKER = "COMMUNITY_WORKER",
+  HEALTH_FACILITY = "HEALTH_FACILITY",
+}
+
 export interface MenuOption {
   [key: string]: string;
 }

@@ -10,8 +10,6 @@ if (!accountSid || !authToken || !fromNumber) {
   throw new Error("Missing Twilio environment variables");
 }
 
-console.log({ accountSid, authToken, fromNumber });
-
 const TWILIO_API_URL = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
 
 const formatPhoneNumber = (phone: string): string => {
