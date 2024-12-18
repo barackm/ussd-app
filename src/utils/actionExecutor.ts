@@ -24,13 +24,12 @@ async function validateAlertAccess(alertId: number, agentPhone: string): Promise
   }
 
   const agent = await getAgentByPhoneNumber(agentPhone);
+
   const agentLocation = JSON.parse(agent?.location?.toString() || "{}");
 
-  const normalizeLocation = (str: string | null | undefined): string => (str || "").toLowerCase().trim();
-
-  const village = normalizeLocation(agentLocation.village);
-  const cell = normalizeLocation(agentLocation.cell);
-  const locationMatches = normalizeLocation(alert.village) === village && normalizeLocation(alert.cell) === cell;
+  const village = normalizeString(agentLocation.village);
+  const cell = normalizeString(agentLocation.cell);
+  const locationMatches = normalizeString(alert.village) === village && normalizeString(alert.cell) === cell;
 
   if (!agent || agent.status !== CommunityAgentStatus.ACTIVE || !locationMatches) {
     return {
