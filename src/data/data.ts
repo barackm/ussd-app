@@ -305,18 +305,10 @@ export const incidentReport: DynamicFlow = {
     options: {
       [OptionEnum.ExaminationContinues]: "confirmAlertStatus.options.examinationContinues", // [CONF.AI]
       [OptionEnum.DiseaseContained]: "confirmAlertStatus.options.diseaseContained", // [CONF.CL]
-      [OptionEnum.CasesDecreased]: "confirmAlertStatus.options.casesDecreased", // [CMT.CD]
-      [OptionEnum.NoChange]: "confirmAlertStatus.options.noChange", // [CMT.NCH]
-      [OptionEnum.CasesIncreased]: "confirmAlertStatus.options.casesIncreased", // [CMT.CI]
-      [OptionEnum.DeathsOccurred]: "confirmAlertStatus.options.deathsOccurred", // [CMT.DO]
     },
     nextStep: {
       [OptionEnum.ExaminationContinues]: StepEnum.AlertStatusUpdated,
       [OptionEnum.DiseaseContained]: StepEnum.AlertStatusUpdated,
-      [OptionEnum.CasesDecreased]: StepEnum.AlertStatusUpdated,
-      [OptionEnum.NoChange]: StepEnum.AlertStatusUpdated,
-      [OptionEnum.CasesIncreased]: StepEnum.AlertStatusUpdated,
-      [OptionEnum.DeathsOccurred]: StepEnum.AlertStatusUpdated,
     },
     config: {
       action: ActionTypeEnum.UPDATE_ALERT_STATUS,
