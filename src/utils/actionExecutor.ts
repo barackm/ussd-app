@@ -127,10 +127,10 @@ export const executeAction = async (
           for (const agent of agents) {
             // const agent = { first_name: "Barack", phone: "0780083122" };
             const message = translate("alert_sms_message", {
-              id: alert.identifier,
-              sector: alert.sector,
-              cell: alert.cell,
-              village: alert.village,
+              id: alert.identifier!,
+              sector: alert.sector!,
+              cell: alert.cell!,
+              village: alert.village!,
               details: `${incidentCode}, ${affectedCode}, ${genderCode}, ${ageCode}, ${durationCode}`,
             });
             sendSMS(agent.phone, message);
