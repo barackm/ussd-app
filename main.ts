@@ -3,6 +3,7 @@ import { Request, Response } from "npm:express@4.18.2";
 import cors from "npm:cors@2.8.5";
 import ussd from "./src/routes/ussd.ts";
 import location from "./src/routes/location.ts";
+import "./scheduler.ts";
 
 const app = express();
 app.use(express.json());
