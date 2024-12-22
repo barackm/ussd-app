@@ -23,9 +23,11 @@ class SessionStore {
 
     try {
       this.sessionId = sessionId;
-      this.session = await getSession(sessionId);
+      const existingSession = await getSession(sessionId);
 
-      if (!this.session && defaultSessionData) {
+      if (existingSession) {
+        this.session = existingSession;
+      } else if (defaultSessionData) {
         this.session = {
           step: Object.keys(incidentReport)[0],
           phoneNumber: "",
@@ -42,8 +44,9 @@ class SessionStore {
           details: "",
           ...defaultSessionData,
         };
-
         await this.save();
+      } else {
+        this.session = null;
       }
     } catch (error: any) {
       throw new Error(`Failed to initialize session: ${error.message}`);
