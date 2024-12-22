@@ -81,8 +81,12 @@ export const en = {
   confirmAlertStatus: {
     prompt: "Please confirm the alert status:",
     options: {
-      examinationContinues: "Examination Continues",
+      examinationContinues: "Examination Continues [CONF.AI]",
       diseaseContained: "Disease Contained",
+      casesDecreased: "Cases Decreased",
+      noChange: "No Changes Observed",
+      casesIncreased: "Cases Increased",
+      deathsOccurred: "Deaths Occurred",
     },
   },
   changeLanguage: {
@@ -110,7 +114,7 @@ New alert:
 - ID: {id}
 - Sector: {sector}
 - Cell/Village: {cell}, {village}
-- Details: [Codes will be here]
+- Details: {details}
 
 Please follow up and update the status.`,
 };

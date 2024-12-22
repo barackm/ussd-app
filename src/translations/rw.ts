@@ -81,8 +81,12 @@ export const rw = {
   confirmAlertStatus: {
     prompt: "Nyamuneka wemeze uko ibyabaye bihagaze:",
     options: {
-      examinationContinues: "Isuzuma rirakomeje",
-      diseaseContained: "Indwara iri mu rugero",
+      examinationContinues: "Isuzuma rirakomeje [CONF.AI]",
+      diseaseContained: "Indwara yahagaze",
+      casesDecreased: "Abafashwe baragabanutse",
+      noChange: "Nta gihindutse",
+      casesIncreased: "Abafashwe biyongereye",
+      deathsOccurred: "Abantu bapfuye",
     },
   },
   changeLanguage: {
@@ -110,7 +114,7 @@ Amakuru mashya:
 - ID: {id}
 - Umurenge: {sector}
 - Akagari/Umudugudu: {cell}, {village}
-- Ibisobanuro: [Kode zizaba hano]
+- Ibisobanuro: {details}
 
 Nyamuneka kurikirana kandi uvugurure uko bihagaze.`,
 };

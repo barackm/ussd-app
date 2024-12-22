@@ -303,12 +303,20 @@ export const incidentReport: DynamicFlow = {
   [StepEnum.ConfirmAlertStatus]: {
     prompt: "confirmAlertStatus.prompt",
     options: {
-      [OptionEnum.ExaminationContinues]: "confirmAlertStatus.options.examinationContinues",
-      [OptionEnum.DiseaseContained]: "confirmAlertStatus.options.diseaseContained",
+      [OptionEnum.ExaminationContinues]: "confirmAlertStatus.options.examinationContinues", // [CONF.AI]
+      [OptionEnum.DiseaseContained]: "confirmAlertStatus.options.diseaseContained", // [CONF.CL]
+      [OptionEnum.CasesDecreased]: "confirmAlertStatus.options.casesDecreased", // [CMT.CD]
+      [OptionEnum.NoChange]: "confirmAlertStatus.options.noChange", // [CMT.NCH]
+      [OptionEnum.CasesIncreased]: "confirmAlertStatus.options.casesIncreased", // [CMT.CI]
+      [OptionEnum.DeathsOccurred]: "confirmAlertStatus.options.deathsOccurred", // [CMT.DO]
     },
     nextStep: {
       [OptionEnum.ExaminationContinues]: StepEnum.AlertStatusUpdated,
       [OptionEnum.DiseaseContained]: StepEnum.AlertStatusUpdated,
+      [OptionEnum.CasesDecreased]: StepEnum.AlertStatusUpdated,
+      [OptionEnum.NoChange]: StepEnum.AlertStatusUpdated,
+      [OptionEnum.CasesIncreased]: StepEnum.AlertStatusUpdated,
+      [OptionEnum.DeathsOccurred]: StepEnum.AlertStatusUpdated,
     },
     config: {
       action: ActionTypeEnum.UPDATE_ALERT_STATUS,
@@ -317,8 +325,12 @@ export const incidentReport: DynamicFlow = {
       },
     },
     optionMappedValues: {
-      [OptionEnum.ExaminationContinues]: AlertStatus.EXAMINATION_CONTINUES,
-      [OptionEnum.DiseaseContained]: AlertStatus.CONTAINED,
+      [OptionEnum.ExaminationContinues]: AlertStatus.EXAMINATION_CONTINUES, // [CONF.AI]
+      [OptionEnum.DiseaseContained]: AlertStatus.CONTAINED, // [CONF.CL]
+      [OptionEnum.CasesDecreased]: AlertStatus.CASES_DECREASED, // [CMT.CD]
+      [OptionEnum.NoChange]: AlertStatus.NO_CHANGE, // [CMT.NCH]
+      [OptionEnum.CasesIncreased]: AlertStatus.CASES_INCREASED, // [CMT.CI]
+      [OptionEnum.DeathsOccurred]: AlertStatus.DEATHS_OCCURRED, // [CMT.DO]
     },
   },
   [StepEnum.ChangeLanguage]: {
@@ -341,4 +353,41 @@ export const incidentReport: DynamicFlow = {
       },
     },
   },
+};
+
+export const translationKeyToCodeMap: Record<string, string> = {
+  // Incident Types
+  "incidentSelection.options.humanDisease": "HI",
+  "incidentSelection.options.humanDeath": "HD",
+  "incidentSelection.options.animalDiseaseDeath": "AID",
+  "incidentSelection.options.ebolaLikeSymptoms": "VHF",
+  "incidentSelection.options.dogBites": "DB",
+
+  // Affected Individuals
+  "affectedIndividuals.options.oneToFive": "NC",
+  "affectedIndividuals.options.sixToTen": "NC",
+  "affectedIndividuals.options.moreThanTen": "NC",
+
+  // Gender
+  "gender.options.male": "SX.M",
+  "gender.options.female": "SX.F",
+
+  // Status
+  "status.options.noEpidemic": "ST.FA",
+  "status.options.riskIncreasing": "ST.IM",
+  "status.options.worsening": "ST.WO",
+
+  // Additional Notes
+  "notes.options.casesDecreased": "CMT.CD",
+  "notes.options.noChange": "CMT.NCH",
+  "notes.options.casesIncreased": "CMT.CI",
+  "notes.options.deathsOccurred": "CMT.DO",
+
+  // Confirmation
+  "confirmation.options.diseaseContained": "CONF.CL",
+  "confirmation.options.examinationContinues": "CONF.AI",
+
+  // Static Codes
+  age: "AG", // User-provided age
+  duration: "DF", // User-provided time since incident
 };

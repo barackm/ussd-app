@@ -72,6 +72,7 @@ router.post("/", sessionMiddleware, async (req: Request, res: Response) => {
 
     response = await handleStep(appData);
     await sessionStore.save();
+    console.log({ sessionStore });
     return res.send(response);
   } catch (error: any) {
     return res.status(500).send(`END Error: ${error.message}`);

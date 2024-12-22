@@ -80,6 +80,10 @@ export enum OptionEnum {
   // Confirm an Alert
   ExaminationContinues = "1",
   DiseaseContained = "2",
+  CasesDecreased = "3",
+  NoChange = "4",
+  CasesIncreased = "5",
+  DeathsOccurred = "6",
 
   // Language Options
   English = "1",

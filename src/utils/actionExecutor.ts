@@ -4,16 +4,21 @@ import { type ActionConfig, type Language, ActionParamTragetEnum, ActionTypeEnum
 import { CommunityAgentStatus } from "../types/agents.ts";
 import { sessionStore } from "../sessionStore.ts";
 import { AlertStatus } from "../types/alerts.ts";
-import { incidentReport } from "../data/data.ts";
+import { incidentReport, translationKeyToCodeMap } from "../data/data.ts";
 import { getHealthFacilityByPhone } from "../db/health-facilities.ts";
 import { normalizeString } from "./string.ts";
 import { translate } from "../translations/translate.ts";
+import { sendSMS } from "../lib/twilio.ts";
 
 interface AlertValidationResult {
   success: boolean;
   message?: string;
   alert?: any;
 }
+
+const getCodeForKey = (key: string): string | null => {
+  return translationKeyToCodeMap[key] || null;
+};
 
 async function validateAlertAccess(alertId: number, agentPhone: string): Promise<AlertValidationResult> {
   const alert = await alerts.getByIdentifier(alertId);
@@ -86,6 +91,12 @@ export const executeAction = async (
   switch (config.action) {
     case ActionTypeEnum.SEND_ALERT: {
       try {
+        const incidentCode = getCodeForKey(session.incidentType);
+        const affectedCode = getCodeForKey(session.affectedIndividuals!);
+        const genderCode = getCodeForKey(session.gender!);
+        const ageCode = session.age ? `AG.${session.age}` : null;
+        const durationCode = session.duration ? `DF.${session.duration}` : null;
+
         const _alertData = {
           province: session.province,
           district: session.district,
@@ -94,10 +105,10 @@ export const executeAction = async (
           reporter_phone: session.phoneNumber,
           incident_type: session.incidentType,
           details: {
-            age: session.age,
-            duration: session.duration,
-            affected_count: session.affectedIndividuals,
-            gender: session.gender,
+            age: ageCode,
+            duration: durationCode,
+            affected_count: affectedCode,
+            gender: genderCode,
           },
           sector: session.sector,
           affected_count: session.affectedIndividuals,
@@ -112,12 +123,17 @@ export const executeAction = async (
 
         // for (const agent of agents) {
         const agent = { first_name: "Barack", phone: "0780083122" };
+
         const message = translate("alert_sms_message", {
           id: alert.identifier,
           sector: alert.sector,
           cell: alert.cell,
           village: alert.village,
+          details: `${incidentCode}, ${affectedCode}, ${genderCode}, ${ageCode}, ${durationCode}`,
         });
+
+        console.log({ message });
+
         // sendSMS(agent.phone, message);
         // }
         return Promise.resolve({ success: true });
