@@ -1,6 +1,6 @@
 import { OptionEnum } from "../enums/menuKeys.ts";
 import { type MenuOption, type Step, type Session } from "../interfaces/types.ts";
-import { translations } from "../translations/translations.ts";
+import { translate } from "../translations/translate.ts";
 
 export const generateMenuText = (options: MenuOption) => {
   return Object.entries(options)
@@ -9,12 +9,9 @@ export const generateMenuText = (options: MenuOption) => {
 };
 
 export const buildMenu = (step: Step, session: Session) => {
-  const language = session.language || "en";
-  const translation = translations[language];
-
   const prompt =
     typeof step?.prompt === "string"
-      ? translation[step.prompt as keyof typeof translation] || step.prompt
+      ? translate(step.prompt as string)
       : typeof step?.prompt === "function"
       ? step.prompt(session)
       : (() => {
@@ -25,13 +22,15 @@ export const buildMenu = (step: Step, session: Session) => {
   const optionsText = Object.keys(options)
     .map((key) =>
       key === OptionEnum.FreeText
-        ? `${translation[options[key] as keyof typeof translation] || options[key]}`
-        : `${key}. ${translation[options[key] as keyof typeof translation] || options[key]}`,
+        ? `${translate(options[key] as string)}`
+        : `${key}) ${translate(options[key] as string)}`,
     )
     .join("\n");
 
   const additionalOptions =
-    !step.isInitialStep && !step.expectsInput && !step.isFinalStep ? "00. Main Menu\n0. Back" : "";
+    !step.isInitialStep && !step.expectsInput && !step.isFinalStep
+      ? `${translate("main_menu_option")}\n${translate("back_option")}`
+      : "";
 
   return `CON ${prompt}\n${optionsText}\n${additionalOptions}`;
 };

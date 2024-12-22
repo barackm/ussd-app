@@ -4,6 +4,7 @@ import { type Step, type DynamicFlow, NextStepValue } from "../interfaces/types.
 import { buildMenu, generateMenuText } from "./menuUtils.ts";
 import { executeAction } from "./actionExecutor.ts";
 import { sessionStore } from "../sessionStore.ts";
+import { translate } from "../translations/translate.ts";
 
 function resolveNextStep(
   nextStep: NextStepValue | undefined,
@@ -61,12 +62,12 @@ export const handleStep = async (menuData: DynamicFlow, userInput?: string): Pro
   const currentStep = menuData[session.step] as any;
 
   if (!currentStep) {
-    return `END Error: Invalid step configuration.`;
+    return `END ${translate("invalid_step_configuration")}`;
   }
 
   if (userInput === undefined) {
     if (currentStep.isFinalStep) {
-      return `END ${currentStep.prompt}`;
+      return `END ${translate(currentStep.prompt)}`;
     }
     return buildMenu(currentStep, session);
   }
@@ -90,7 +91,7 @@ export const handleStep = async (menuData: DynamicFlow, userInput?: string): Pro
     const nextStep = menuData[resolvedNextStep as string];
     if (nextStep?.isFinalStep) {
       await sessionStore.save();
-      return `END ${nextStep.prompt}`;
+      return `END ${translate(nextStep.prompt)}`;
     }
 
     await sessionStore.save();
@@ -108,12 +109,12 @@ export const handleStep = async (menuData: DynamicFlow, userInput?: string): Pro
     });
     if (menuData[session.step]?.isFinalStep) {
       await sessionStore.save();
-      return `END ${menuData[session.step].prompt}`;
+      return `END ${translate(menuData[session.step].prompt)}`;
     }
 
     await sessionStore.save();
     return buildMenu(menuData[session.step], sessionStore.get());
   }
 
-  return `CON Invalid input. ${currentStep.prompt}\n${generateMenuText(currentOptions)}`;
+  return `CON ${translate("invalid_input")}. ${translate(currentStep.prompt)}\n${generateMenuText(currentOptions)}`;
 };

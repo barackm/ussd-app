@@ -7,6 +7,7 @@ import { AlertStatus } from "../types/alerts.ts";
 import { incidentReport } from "../data/data.ts";
 import { getHealthFacilityByPhone } from "../db/health-facilities.ts";
 import { normalizeString } from "./string.ts";
+import { translate } from "../translations/translate.ts";
 
 interface AlertValidationResult {
   success: boolean;
@@ -19,7 +20,7 @@ async function validateAlertAccess(alertId: number, agentPhone: string): Promise
   if (!alert) {
     return {
       success: false,
-      message: `Alert with ID ${alertId} was not found`,
+      message: translate("alert_not_found"),
     };
   }
 
@@ -34,11 +35,11 @@ async function validateAlertAccess(alertId: number, agentPhone: string): Promise
   if (!agent || agent.status !== CommunityAgentStatus.ACTIVE || !locationMatches) {
     return {
       success: false,
-      message: "You are not authorized to update this alert status",
+      message: translate("unauthorized_alert_update"),
     };
   }
 
-  return { success: true, message: "END Alert status updated successfully" };
+  return { success: true, message: translate("alert_status_updated") };
 }
 
 async function validateAlertAccessForHealthFacility(
@@ -49,7 +50,7 @@ async function validateAlertAccessForHealthFacility(
   if (!alert) {
     return {
       success: false,
-      message: `Alert with ID ${alertId} was not found`,
+      message: translate("alert_not_found"),
     };
   }
 
@@ -63,13 +64,13 @@ async function validateAlertAccessForHealthFacility(
   if (!healthFacility || !locationMatches) {
     return {
       success: false,
-      message: "You are not authorized to access this alert",
+      message: translate("unauthorized_alert_access"),
     };
   }
 
   return {
     success: true,
-    message: "END Alert access granted successfully",
+    message: translate("alert_access_granted"),
     alert,
   };
 }
@@ -111,20 +112,17 @@ export const executeAction = async (
 
         // for (const agent of agents) {
         const agent = { first_name: "Barack", phone: "0780083122" };
-        const message = `
-🚨 AlertHub
-New alert:
-- ID: ${alert.identifier}
-- Sector: ${alert.sector}
-- Cell/Village: ${alert.cell}, ${alert.village}
-- Details: [Codes will be here]
-
-Please follow up and update the status.`;
+        const message = translate("alert_sms_message", {
+          id: alert.identifier,
+          sector: alert.sector,
+          cell: alert.cell,
+          village: alert.village,
+        });
         // sendSMS(agent.phone, message);
         // }
         return Promise.resolve({ success: true });
       } catch {
-        return Promise.resolve({ success: false, message: "Failed to send alert" });
+        return Promise.resolve({ success: false, message: translate("alert_send_failed") });
       }
     }
 
@@ -156,7 +154,7 @@ Please follow up and update the status.`;
         } catch {
           return Promise.resolve({
             success: false,
-            message: "Failed to update alert status",
+            message: translate("alert_status_update_failed"),
           });
         }
       }
@@ -178,7 +176,7 @@ Please follow up and update the status.`;
     }
 
     default: {
-      return Promise.resolve({ success: false, message: "Unknown action" });
+      return Promise.resolve({ success: false, message: translate("unknown_action") });
     }
   }
 };

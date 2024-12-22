@@ -1,9 +1,9 @@
-import en from "./en.json" with { type: "json" };
-import rw from "./rw.json" with { type: "json" };
+import { en } from "./en.ts";
+import { rw } from "./rw.ts";
 
-export const translations = {
+export const translations: Record<string, any> = {
   en,
   rw,
 };
 
-export type TranslationKey = keyof (typeof translations)["en"];
+export type TranslationKey = keyof (typeof translations)["rw"];

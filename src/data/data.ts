@@ -1,6 +1,7 @@
 import { OptionEnum, StepEnum } from "../enums/menuKeys.ts";
 import { ActionParamTragetEnum, ActionTypeEnum, DynamicFlow } from "../interfaces/types.ts";
 import { sessionStore } from "../sessionStore.ts";
+import { TranslationKey } from "../translations/translations.ts";
 import { AlertStatus } from "../types/alerts.ts";
 import {
   getCellsOptions,
@@ -15,7 +16,7 @@ export const locationFlow: DynamicFlow = {
     prompt: "Please select your Province:",
     options: () => {
       const { menuOptions } = getProvincesOptions();
-      return menuOptions;
+      return menuOptions as any;
     },
     nextStep: (userInput: string) => {
       const { reverseMap } = getProvincesOptions();
@@ -33,7 +34,7 @@ export const locationFlow: DynamicFlow = {
       const session = sessionStore.get();
       const selectedProvince = session.province;
       const { menuOptions } = getDistrictsOptions(selectedProvince!);
-      return menuOptions;
+      return menuOptions as any;
     },
     nextStep: (userInput: string) => {
       const session = sessionStore.get();
@@ -53,7 +54,7 @@ export const locationFlow: DynamicFlow = {
     options: () => {
       const session = sessionStore.get();
       const { menuOptions } = getSectorsOptions(session.province, session.district);
-      return menuOptions;
+      return menuOptions as any;
     },
     nextStep: (userInput: string) => {
       const session = sessionStore.get();
@@ -72,7 +73,7 @@ export const locationFlow: DynamicFlow = {
     options: () => {
       const session = sessionStore.get();
       const { menuOptions } = getCellsOptions(session.province, session.district, session.sector);
-      return menuOptions;
+      return menuOptions as any;
     },
     nextStep: (userInput: string) => {
       const session = sessionStore.get();
@@ -91,7 +92,7 @@ export const locationFlow: DynamicFlow = {
     options: () => {
       const session = sessionStore.get();
       const { menuOptions } = getVillagesOptions(session.province, session.district, session.sector, session.cell);
-      return menuOptions;
+      return menuOptions as any;
     },
     nextStep: (userInput: string) => {
       const session = sessionStore.get();
@@ -109,12 +110,12 @@ export const locationFlow: DynamicFlow = {
 
 export const incidentReport: DynamicFlow = {
   [StepEnum.MainMenu]: {
-    prompt: "Please select an option:",
+    prompt: "mainMenu.prompt",
     options: {
-      [OptionEnum.ReportSuspiciousActivity]: "Report Suspicious Activity",
-      [OptionEnum.FollowUpAlert]: "Follow-up on an Alert",
-      [OptionEnum.ConfirmAlert]: "Confirm an Alert",
-      [OptionEnum.ChangeLanguage]: "Change Language",
+      [OptionEnum.ReportSuspiciousActivity]: "mainMenu.options.reportSuspiciousActivity",
+      [OptionEnum.FollowUpAlert]: "mainMenu.options.followUpAlert",
+      [OptionEnum.ConfirmAlert]: "mainMenu.options.confirmAlert",
+      [OptionEnum.ChangeLanguage]: "mainMenu.options.changeLanguage",
     },
     nextStep: {
       [OptionEnum.ReportSuspiciousActivity]: StepEnum.ProvinceSelection,
@@ -125,20 +126,20 @@ export const incidentReport: DynamicFlow = {
     isInitialStep: true,
   },
   [StepEnum.IncidentSelection]: {
-    prompt: "Please select the type of incident you want to report:",
+    prompt: "incidentSelection.prompt",
     options: {
-      [OptionEnum.HumanDisease]: "Human Disease",
-      [OptionEnum.HumanDeath]: "Human Death",
-      [OptionEnum.AnimalDiseaseDeath]: "Animal Disease/Death",
-      [OptionEnum.EbolaLikeSymptoms]: "Ebola-like Symptoms",
-      [OptionEnum.DogBites]: "Dog Bites",
+      [OptionEnum.HumanDisease]: "incidentSelection.options.humanDisease",
+      [OptionEnum.HumanDeath]: "incidentSelection.options.humanDeath",
+      [OptionEnum.AnimalDiseaseDeath]: "incidentSelection.options.animalDiseaseDeath",
+      [OptionEnum.EbolaLikeSymptoms]: "incidentSelection.options.ebolaLikeSymptoms",
+      [OptionEnum.DogBites]: "incidentSelection.options.dogBites",
     },
     nextStep: (userInput) => {
-      const selectedOptionText = (incidentReport[StepEnum.IncidentSelection]?.options as Record<string, string>)?.[
-        userInput
-      ];
+      const selectedOptionText = (
+        incidentReport[StepEnum.IncidentSelection]?.options as Record<string, TranslationKey>
+      )?.[userInput];
       sessionStore.update({
-        incidentType: selectedOptionText,
+        incidentType: String(selectedOptionText),
       });
       return {
         [OptionEnum.HumanDisease]: StepEnum.AffectedIndividuals,
@@ -151,18 +152,18 @@ export const incidentReport: DynamicFlow = {
   },
   ...locationFlow,
   [StepEnum.AffectedIndividuals]: {
-    prompt: "Please provide the number of individuals affected:",
+    prompt: "affectedIndividuals.prompt",
     options: {
-      [OptionEnum.OneToFiveIndividuals]: "1-5 Individuals",
-      [OptionEnum.SixToTenIndividuals]: "6-10 Individuals",
-      [OptionEnum.MoreThanTenIndividuals]: "More than 10 Individuals",
+      [OptionEnum.OneToFiveIndividuals]: "affectedIndividuals.options.oneToFive",
+      [OptionEnum.SixToTenIndividuals]: "affectedIndividuals.options.sixToTen",
+      [OptionEnum.MoreThanTenIndividuals]: "affectedIndividuals.options.moreThanTen",
     },
     nextStep: (userInput: string) => {
-      const selectedOptionText = (incidentReport[StepEnum.AffectedIndividuals]?.options as Record<string, string>)?.[
-        userInput
-      ];
+      const selectedOptionText = (
+        incidentReport[StepEnum.AffectedIndividuals]?.options as Record<string, TranslationKey>
+      )?.[userInput];
       sessionStore.update({
-        affectedIndividuals: selectedOptionText,
+        affectedIndividuals: String(selectedOptionText),
       });
 
       return {
@@ -173,15 +174,17 @@ export const incidentReport: DynamicFlow = {
     },
   },
   [StepEnum.Gender]: {
-    prompt: "Please select the gender:",
+    prompt: "gender.prompt",
     options: {
-      [OptionEnum.Male]: "Male",
-      [OptionEnum.Female]: "Female",
+      [OptionEnum.Male]: "gender.options.male",
+      [OptionEnum.Female]: "gender.options.female",
     },
     nextStep: (userInput: string) => {
-      const selectedOptionText = (incidentReport[StepEnum.Gender]?.options as Record<string, string>)?.[userInput];
+      const selectedOptionText = (incidentReport[StepEnum.Gender]?.options as Record<string, TranslationKey>)?.[
+        userInput
+      ];
       sessionStore.update({
-        gender: selectedOptionText,
+        gender: String(selectedOptionText),
       });
       return {
         [OptionEnum.Male]: StepEnum.Age,
@@ -190,10 +193,10 @@ export const incidentReport: DynamicFlow = {
     },
   },
   [StepEnum.Age]: {
-    prompt: "Please enter the age:",
+    prompt: "age.prompt",
     expectsInput: true,
     options: {
-      [OptionEnum.FreeText]: "",
+      [OptionEnum.FreeText]: "age.options.freeText",
     },
     nextStep: (userInput: string) => {
       sessionStore.update({
@@ -205,10 +208,10 @@ export const incidentReport: DynamicFlow = {
     },
   },
   [StepEnum.DurationSinceIncident]: {
-    prompt: "How long ago did the incident occur? (e.g. 2 hours, 1 day):",
+    prompt: "durationSinceIncident.prompt",
     expectsInput: true,
     options: {
-      [OptionEnum.FreeText]: "",
+      [OptionEnum.FreeText]: "durationSinceIncident.options.freeText",
     },
     nextStep: (userInput: string) => {
       sessionStore.update({
@@ -220,10 +223,10 @@ export const incidentReport: DynamicFlow = {
     },
   },
   [StepEnum.ConfirmReportDetails]: {
-    prompt: "Please confirm the details of your report:",
+    prompt: "confirmReportDetails.prompt",
     options: {
-      [OptionEnum.ConfirmReport]: "Confirm Report",
-      [OptionEnum.CancelReport]: "Cancel Report",
+      [OptionEnum.ConfirmReport]: "confirmReportDetails.options.confirm",
+      [OptionEnum.CancelReport]: "confirmReportDetails.options.cancel",
     },
     nextStep: {
       [OptionEnum.ConfirmReport]: StepEnum.ReportSubmission,
@@ -232,14 +235,14 @@ export const incidentReport: DynamicFlow = {
     config: { action: ActionTypeEnum.SEND_ALERT },
   },
   [StepEnum.ReportSubmission]: {
-    prompt: "Thank you! Your report has been submitted.",
+    prompt: "reportSubmission.prompt",
     options: {},
     isFinalStep: true,
   },
   [StepEnum.FollowUpAlert]: {
-    prompt: "Please enter your alert ID to follow up:",
+    prompt: "followUpAlert.prompt",
     options: {
-      [OptionEnum.FreeText]: "",
+      [OptionEnum.FreeText]: "followUpAlert.options.freeText",
     },
     expectsInput: true,
     nextStep: {
@@ -253,11 +256,11 @@ export const incidentReport: DynamicFlow = {
     },
   },
   [StepEnum.ProvideFollowUpStatus]: {
-    prompt: "Please provide the status of the alert:",
+    prompt: "provideFollowUpStatus.prompt",
     options: {
-      [OptionEnum.FalseAlert]: "False Alert",
-      [OptionEnum.SituationImproved]: "Situation Improved",
-      [OptionEnum.SituationWorsened]: "Situation Worsened",
+      [OptionEnum.FalseAlert]: "provideFollowUpStatus.options.falseAlert",
+      [OptionEnum.SituationImproved]: "provideFollowUpStatus.options.situationImproved",
+      [OptionEnum.SituationWorsened]: "provideFollowUpStatus.options.situationWorsened",
     },
     nextStep: {
       [OptionEnum.FalseAlert]: StepEnum.AlertStatusUpdated,
@@ -277,14 +280,14 @@ export const incidentReport: DynamicFlow = {
     },
   },
   [StepEnum.AlertStatusUpdated]: {
-    prompt: "Thank you! The status of the alert has been updated.",
+    prompt: "alertStatusUpdated.prompt",
     options: {},
     isFinalStep: true,
   },
   [StepEnum.ConfirmAlertID]: {
-    prompt: "Please provide the alert ID to confirm the status:",
+    prompt: "confirmAlertID.prompt",
     options: {
-      [OptionEnum.FreeText]: "",
+      [OptionEnum.FreeText]: "confirmAlertID.options.freeText",
     },
     expectsInput: true,
     nextStep: {
@@ -298,10 +301,10 @@ export const incidentReport: DynamicFlow = {
     },
   },
   [StepEnum.ConfirmAlertStatus]: {
-    prompt: "Please confirm the alert status:",
+    prompt: "confirmAlertStatus.prompt",
     options: {
-      [OptionEnum.ExaminationContinues]: "Examination Continues",
-      [OptionEnum.DiseaseContained]: "Disease Contained",
+      [OptionEnum.ExaminationContinues]: "confirmAlertStatus.options.examinationContinues",
+      [OptionEnum.DiseaseContained]: "confirmAlertStatus.options.diseaseContained",
     },
     nextStep: {
       [OptionEnum.ExaminationContinues]: StepEnum.AlertStatusUpdated,
@@ -319,10 +322,10 @@ export const incidentReport: DynamicFlow = {
     },
   },
   [StepEnum.ChangeLanguage]: {
-    prompt: "Please select your language:",
+    prompt: "changeLanguage.prompt",
     options: {
-      [OptionEnum.English]: "English",
-      [OptionEnum.Kinyarwanda]: "Kinyarwanda",
+      [OptionEnum.English]: "changeLanguage.options.english",
+      [OptionEnum.Kinyarwanda]: "changeLanguage.options.kinyarwanda",
     },
     nextStep: {
       [OptionEnum.English]: StepEnum.MainMenu,
