@@ -10,6 +10,8 @@ import { normalizeString } from "./string.ts";
 import { translate } from "../translations/translate.ts";
 import { sendSMS } from "../lib/twilio.ts";
 
+const SEND_SMS_NOTIFICATIONS = Deno.env.get("SEND_SMS_NOTIFICATIONS") === "true";
+
 interface AlertValidationResult {
   success: boolean;
   message?: string;
@@ -103,7 +105,7 @@ export const executeAction = async (
           cell: session.cell,
           village: session.village,
           reporter_phone: session.phoneNumber,
-          incident_type: session.incidentType,
+          incident_type: translate(session.incidentType),
           details: {
             age: ageCode,
             duration: durationCode,
@@ -121,21 +123,20 @@ export const executeAction = async (
           village: alert.village!,
         });
 
-        // for (const agent of agents) {
-        const agent = { first_name: "Barack", phone: "0780083122" };
+        if (SEND_SMS_NOTIFICATIONS) {
+          for (const agent of agents) {
+            // const agent = { first_name: "Barack", phone: "0780083122" };
+            const message = translate("alert_sms_message", {
+              id: alert.identifier,
+              sector: alert.sector,
+              cell: alert.cell,
+              village: alert.village,
+              details: `${incidentCode}, ${affectedCode}, ${genderCode}, ${ageCode}, ${durationCode}`,
+            });
+            sendSMS(agent.phone, message);
+          }
+        }
 
-        const message = translate("alert_sms_message", {
-          id: alert.identifier,
-          sector: alert.sector,
-          cell: alert.cell,
-          village: alert.village,
-          details: `${incidentCode}, ${affectedCode}, ${genderCode}, ${ageCode}, ${durationCode}`,
-        });
-
-        console.log({ message });
-
-        // sendSMS(agent.phone, message);
-        // }
         return Promise.resolve({ success: true });
       } catch {
         return Promise.resolve({ success: false, message: translate("alert_send_failed") });

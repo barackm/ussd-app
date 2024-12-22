@@ -46,7 +46,6 @@ class SessionStore {
         await this.save();
       }
     } catch (error: any) {
-      console.error("Session initialization failed:", error);
       throw new Error(`Failed to initialize session: ${error.message}`);
     }
   }
