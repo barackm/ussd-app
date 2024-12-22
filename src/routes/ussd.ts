@@ -21,7 +21,7 @@ router.post("/", sessionMiddleware, async (req: Request, res: Response) => {
       phoneNumber,
       serviceCode,
       networkCode,
-      language: "en",
+      language: "rw",
       province: "",
       district: "",
       sector: "",
