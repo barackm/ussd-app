@@ -13,8 +13,8 @@ router.post("/", sessionMiddleware, async (req: Request, res: Response) => {
   const appData = incidentReport;
 
   try {
-    if (!phoneNumber || !serviceCode || !networkCode) {
-      return res.status(400).send("END Error: Invalid request, provide phoneNumber, serviceCode and networkCode");
+    if (!phoneNumber || !serviceCode) {
+      return res.status(400).send("END Error: Invalid request, provide phoneNumber and serviceCode");
     }
 
     await sessionStore.init(sessionId, {
