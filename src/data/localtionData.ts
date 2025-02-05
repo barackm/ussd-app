@@ -13,42 +13,40 @@ export const fetchRwandaLocationData = async (): Promise<LocationRawData> => {
 
   try {
     const { data: resData } = await axios.get(url, options);
-    const data = resData.data;
-    const kigaliData: LocationRawData = data?.find(
-      (province: LocationRawData) => Object.keys(province)[0] === "Kigali",
-    );
-    return kigaliData;
+    return resData.data;
   } catch (error) {
     throw error;
   }
 };
 
-export function transformLocationData(rawData: LocationRawData): LocationMap {
+export function transformLocationData(rawData: LocationRawData[]): LocationMap {
   const transformedData: LocationMap = {};
 
-  for (const province in rawData) {
-    transformedData[province] = { districts: {} };
-    rawData[province].forEach((districtObj) => {
-      for (const district in districtObj) {
-        transformedData[province].districts[district] = { sectors: {} };
-        districtObj[district].forEach((sectorObj) => {
-          for (const sector in sectorObj) {
-            transformedData[province].districts[district].sectors[sector] = { cells: {} };
-            sectorObj[sector].forEach((cellObj) => {
-              for (const cell in cellObj) {
-                transformedData[province].districts[district].sectors[sector].cells[cell] = {
-                  villages: cellObj[cell],
-                };
-              }
-            });
-          }
-        });
-      }
-    });
-  }
+  rawData.forEach((provinceData) => {
+    for (const province in provinceData) {
+      transformedData[province] = { districts: {} };
+      provinceData[province].forEach((districtObj) => {
+        for (const district in districtObj) {
+          transformedData[province].districts[district] = { sectors: {} };
+          districtObj[district].forEach((sectorObj) => {
+            for (const sector in sectorObj) {
+              transformedData[province].districts[district].sectors[sector] = { cells: {} };
+              sectorObj[sector].forEach((cellObj) => {
+                for (const cell in cellObj) {
+                  transformedData[province].districts[district].sectors[sector].cells[cell] = {
+                    villages: cellObj[cell],
+                  };
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  });
 
   return transformedData;
 }
 
 const data = await fetchRwandaLocationData();
-export const locationMap = transformLocationData(data as unknown as LocationRawData);
+export const locationMap = transformLocationData(data as unknown as LocationRawData[]);

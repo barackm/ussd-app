@@ -117,9 +117,9 @@ New alert:
 - Details: {details}
 
 Please follow up and update the status.`,
-select_province: "please select your province",
-select_district: "Please select your district:",
-select_sector: "Please select your sector:",
-select_cell: "Please select your cell:",
-select_village: "Please select your village:",
+  select_province: "please select your province",
+  select_district: "Please select your district:",
+  select_sector: "Please select your sector:",
+  select_cell: "Please select your cell:",
+  select_village: "Please select your village:",
 };

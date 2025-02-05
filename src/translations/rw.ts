@@ -117,9 +117,9 @@ Amakuru mashya:
 - Ibisobanuro: {details}
 
 Kurikirana kandi uvugurure uko bihagaze.`,
-select_province: "Hitamo Intara yawe",
-select_district: "Hitamo Akarere kawe:",
-select_sector: "Hitamo umurenge wawe:",
-select_cell: "Hitamo Akagari kawe:",
-select_village: "Hitamo umudugudu wawe:",
+  select_province: "Hitamo Intara yawe",
+  select_district: "Hitamo Akarere kawe:",
+  select_sector: "Hitamo umurenge wawe:",
+  select_cell: "Hitamo Akagari kawe:",
+  select_village: "Hitamo umudugudu wawe:",
 };
