@@ -13,7 +13,9 @@ import {
 
 export const locationFlow: DynamicFlow = {
   [StepEnum.ProvinceSelection]: {
-    prompt: "Please select your Province:",
+    // prompt: "Please select your Province:",
+
+    prompt:"select_province",
     options: () => {
       const { menuOptions } = getProvincesOptions();
       return menuOptions as any;
@@ -29,7 +31,7 @@ export const locationFlow: DynamicFlow = {
     },
   },
   [StepEnum.DistrictSelection]: {
-    prompt: "Please select your District:",
+    prompt: "select_district",
     options: () => {
       const session = sessionStore.get();
       const selectedProvince = session.province;
@@ -50,7 +52,7 @@ export const locationFlow: DynamicFlow = {
     },
   },
   [StepEnum.SectorSelection]: {
-    prompt: "Please select your Sector:",
+    prompt: "select_sector",
     options: () => {
       const session = sessionStore.get();
       const { menuOptions } = getSectorsOptions(session.province, session.district);
@@ -69,7 +71,7 @@ export const locationFlow: DynamicFlow = {
     },
   },
   [StepEnum.CellSelection]: {
-    prompt: "Please select your Cell:",
+    prompt: "select_cell",
     options: () => {
       const session = sessionStore.get();
       const { menuOptions } = getCellsOptions(session.province, session.district, session.sector);
@@ -88,7 +90,7 @@ export const locationFlow: DynamicFlow = {
     },
   },
   [StepEnum.VillageSelection]: {
-    prompt: "Please select your Village:",
+    prompt: "select_village:",
     options: () => {
       const session = sessionStore.get();
       const { menuOptions } = getVillagesOptions(session.province, session.district, session.sector, session.cell);

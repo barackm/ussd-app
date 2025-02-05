@@ -1,6 +1,6 @@
 export const rw = {
   mainMenu: {
-    prompt: "Nyamuneka hitamo uburyo bwo gukomeza:",
+    prompt: "Hitamo uburyo bwo gukomeza:",
     options: {
       reportSuspiciousActivity: "Tanga raporo y'ibikorwa bidasanzwe",
       followUpAlert: "Gukurikirana amakuru yatanzwe",
@@ -9,7 +9,7 @@ export const rw = {
     },
   },
   incidentSelection: {
-    prompt: "Nyamuneka hitamo ubwoko bw'ibyabaye ushaka gutanga raporo kuri byo:",
+    prompt: "Hitamo ubwoko bw'ibyabaye ushaka gutanga raporo kuri byo:",
     options: {
       humanDisease: "Indwara y'abantu",
       humanDeath: "Urupfu rw'umuntu",
@@ -19,7 +19,7 @@ export const rw = {
     },
   },
   affectedIndividuals: {
-    prompt: "Nyamuneka andika umubare w'abantu byagizeho ingaruka:",
+    prompt: "Andika umubare w'abantu byagizeho ingaruka:",
     options: {
       oneToFive: "Abantu 1-5",
       sixToTen: "Abantu 6-10",
@@ -27,14 +27,14 @@ export const rw = {
     },
   },
   gender: {
-    prompt: "Nyamuneka hitamo igitsina:",
+    prompt: "Hitamo igitsina:",
     options: {
       male: "Gabo",
       female: "Gore",
     },
   },
   age: {
-    prompt: "Nyamuneka andika imyaka y'ubukure:",
+    prompt: "Andika imyaka y'ubukure:",
     options: {
       freeText: "",
     },
@@ -46,7 +46,7 @@ export const rw = {
     },
   },
   confirmReportDetails: {
-    prompt: "Nyamuneka wemeze amakuru y'ibyabaye washyizemo:",
+    prompt: "Emeze amakuru y'ibyabaye washyizemo:",
     options: {
       confirm: "Emeza raporo",
       cancel: "Hagarika raporo",
@@ -56,13 +56,13 @@ export const rw = {
     prompt: "Murakoze! Raporo yawe yagejejwe neza.",
   },
   followUpAlert: {
-    prompt: "Nyamuneka andika ID y'amakuru ushaka gukurikirana:",
+    prompt: "Andika ID y'amakuru ushaka gukurikirana:",
     options: {
       freeText: "",
     },
   },
   provideFollowUpStatus: {
-    prompt: "Nyamuneka andika uko ibyabaye bihagaze:",
+    prompt: "Andika uko ibyabaye bihagaze:",
     options: {
       falseAlert: "Amakuru atari ukuri",
       situationImproved: "Ibyabaye byoroheje",
@@ -73,13 +73,13 @@ export const rw = {
     prompt: "Murakoze! Uko ibyabaye bihagaze byavuguruwe neza.",
   },
   confirmAlertID: {
-    prompt: "Nyamuneka shyiramo ID y'amakuru kugira ngo wemeze uko bihagaze:",
+    prompt: "Shyiramo ID y'amakuru kugira ngo wemeze uko bihagaze:",
     options: {
       freeText: "",
     },
   },
   confirmAlertStatus: {
-    prompt: "Nyamuneka wemeze uko ibyabaye bihagaze:",
+    prompt: "Emeze uko ibyabaye bihagaze:",
     options: {
       examinationContinues: "Isuzuma rirakomeje [CONF.AI]",
       diseaseContained: "Indwara yahagaze",
@@ -90,13 +90,13 @@ export const rw = {
     },
   },
   changeLanguage: {
-    prompt: "Nyamuneka hitamo ururimi rwifuzwa:",
+    prompt: "Hitamo ururimi rwifuzwa:",
     options: {
       english: "Icyongereza",
       kinyarwanda: "Ikinyarwanda",
     },
   },
-  main_menu_option: "00) Menyo y'ibiganza",
+  main_menu_option: "00) Subira Inyuma",
   back_option: "0) Subira",
   alert_not_found: "Amakuru afite uwo murongo ntabashije kuboneka",
   unauthorized_alert_update: "Ntabwo wemerewe kuvugurura aya makuru",
@@ -116,5 +116,10 @@ Amakuru mashya:
 - Akagari/Umudugudu: {cell}, {village}
 - Ibisobanuro: {details}
 
-Nyamuneka kurikirana kandi uvugurure uko bihagaze.`,
+Kurikirana kandi uvugurure uko bihagaze.`,
+select_province: "Hitamo Intara yawe",
+select_district: "Hitamo Akarere kawe:",
+select_sector: "Hitamo umurenge wawe:",
+select_cell: "Hitamo Akagari kawe:",
+select_village: "Hitamo umudugudu wawe:",
 };

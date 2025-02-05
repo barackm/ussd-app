@@ -11,12 +11,15 @@ const router = express.Router();
 router.post("/", sessionMiddleware, async (req: Request, res: Response) => {
   const { text, sessionId, serviceCode, phoneNumber, networkCode } = req.body;
   const appData = incidentReport;
-
+console.log(serviceCode)
   try {
+
     if (!phoneNumber || !serviceCode) {
       return res.status(400).send("END Error: Invalid request, provide phoneNumber and serviceCode");
     }
-
+    if(serviceCode!=="*180#"){
+      return res.status(400).send("END Error: Invalid request, Service Code invalid");
+    }
     await sessionStore.init(sessionId, {
       phoneNumber,
       serviceCode,
