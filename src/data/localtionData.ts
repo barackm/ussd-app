@@ -49,4 +49,5 @@ export function transformLocationData(rawData: LocationRawData[]): LocationMap {
 }
 
 const data = await fetchRwandaLocationData();
+export const locationData = data as unknown as LocationRawData[];
 export const locationMap = transformLocationData(data as unknown as LocationRawData[]);

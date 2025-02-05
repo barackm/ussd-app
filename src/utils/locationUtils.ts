@@ -1,7 +1,6 @@
-import { locationMap } from "../data/localtionData.ts";
+import { locationData, locationMap } from "../data/localtionData.ts";
 import type { LocationRawData, MenuOption } from "../interfaces/types.ts";
-import locationData from "../data/kigaliData.json" with { type: "json" };
-const data = locationData as unknown as LocationRawData;
+
 type SearchTarget = "province" | "district" | "sector" | "cell" | "village";
 
 export const getProvincesOptions = (): {
@@ -112,17 +111,18 @@ export const getVillagesOptions = (
 };
 
 export function getProvinces(): string[] {
-  return Object.keys(data);
+  return locationData.map((provinceObj) => Object.keys(provinceObj)[0]);
 }
 
 export function getDistricts(province: string): string[] {
-  const provinceData = data[province];
-  if (!provinceData?.length) return [];
-  return provinceData.map((district) => Object.keys(district)[0]);
+  const provinceData = locationData.find((p) => Object.keys(p)[0] === province);
+  if (!provinceData) return [];
+  return provinceData[province].map((district) => Object.keys(district)[0]);
 }
 
 export function getSectors(district: string): string[] {
-  for (const province of Object.values(data)) {
+  for (const provinceObj of locationData) {
+    const province = Object.values(provinceObj)[0];
     const districtData = province.find((d) => Object.keys(d)[0] === district);
     if (districtData) {
       return districtData[district].map((sector) => Object.keys(sector)[0]);
@@ -132,12 +132,13 @@ export function getSectors(district: string): string[] {
 }
 
 export function getCells(sector: string): string[] {
-  for (const province of Object.values(data)) {
-    for (const district of province) {
-      const sectors = district[Object.keys(district)[0]];
-      const sectorData = sectors.find((s) => Object.keys(s)[0] === sector);
+  for (const provinceObj of locationData) {
+    const province = Object.values(provinceObj)[0];
+    for (const districtObj of province) {
+      const district = Object.values(districtObj)[0];
+      const sectorData = district.find((s) => Object.keys(s)[0] === sector);
       if (sectorData) {
-        return Object.keys(sectorData[sector][0]);
+        return sectorData[sector].map((cell) => Object.keys(cell)[0]);
       }
     }
   }
@@ -145,14 +146,15 @@ export function getCells(sector: string): string[] {
 }
 
 export function getVillages(cell: string): string[] {
-  for (const province of Object.values(data)) {
-    for (const district of province) {
-      for (const sector of district[Object.keys(district)[0]]) {
-        const cells = sector[Object.keys(sector)[0]];
-        for (const cellData of cells) {
-          if (cell in cellData) {
-            return cellData[cell];
-          }
+  for (const provinceObj of locationData) {
+    const province = Object.values(provinceObj)[0];
+    for (const districtObj of province) {
+      const district = Object.values(districtObj)[0];
+      for (const sectorObj of district) {
+        const sector = Object.values(sectorObj)[0];
+        const cellData = sector.find((c) => Object.keys(c)[0] === cell);
+        if (cellData) {
+          return cellData[cell];
         }
       }
     }
@@ -174,43 +176,47 @@ export function searchByTarget(query: string, target: SearchTarget): Array<Parti
 
   switch (target) {
     case "province":
-      return Object.keys(data)
+      return locationData
+        .map((provinceObj) => Object.keys(provinceObj)[0])
         .filter((province) => province.toLowerCase().includes(searchTerm))
         .map((province) => ({ province }));
 
     case "district":
-      for (const [province, districts] of Object.entries(data)) {
-        districts.forEach((district) => {
-          const districtName = Object.keys(district)[0];
+      locationData.forEach((provinceObj) => {
+        const province = Object.keys(provinceObj)[0];
+        provinceObj[province].forEach((districtObj) => {
+          const districtName = Object.keys(districtObj)[0];
           if (districtName.toLowerCase().includes(searchTerm)) {
             results.push({ province, district: districtName });
           }
         });
-      }
+      });
       break;
 
     case "sector":
-      for (const [province, districts] of Object.entries(data)) {
-        districts.forEach((district) => {
-          const districtName = Object.keys(district)[0];
-          district[districtName].forEach((sector) => {
-            const sectorName = Object.keys(sector)[0];
+      locationData.forEach((provinceObj) => {
+        const province = Object.keys(provinceObj)[0];
+        provinceObj[province].forEach((districtObj) => {
+          const districtName = Object.keys(districtObj)[0];
+          districtObj[districtName].forEach((sectorObj) => {
+            const sectorName = Object.keys(sectorObj)[0];
             if (sectorName.toLowerCase().includes(searchTerm)) {
               results.push({ province, district: districtName, sector: sectorName });
             }
           });
         });
-      }
+      });
       break;
 
     case "cell":
-      for (const [province, districts] of Object.entries(data)) {
-        districts.forEach((district) => {
-          const districtName = Object.keys(district)[0];
-          district[districtName].forEach((sector) => {
-            const sectorName = Object.keys(sector)[0];
-            sector[sectorName].forEach((cell) => {
-              const cellName = Object.keys(cell)[0];
+      locationData.forEach((provinceObj) => {
+        const province = Object.keys(provinceObj)[0];
+        provinceObj[province].forEach((districtObj) => {
+          const districtName = Object.keys(districtObj)[0];
+          districtObj[districtName].forEach((sectorObj) => {
+            const sectorName = Object.keys(sectorObj)[0];
+            sectorObj[sectorName].forEach((cellObj) => {
+              const cellName = Object.keys(cellObj)[0];
               if (cellName.toLowerCase().includes(searchTerm)) {
                 results.push({
                   province,
@@ -222,7 +228,7 @@ export function searchByTarget(query: string, target: SearchTarget): Array<Parti
             });
           });
         });
-      }
+      });
       break;
 
     case "village":
@@ -236,20 +242,15 @@ export function searchVillages(query: string): VillageLocation[] {
   const results: VillageLocation[] = [];
   const searchTerm = query.toLowerCase();
 
-  for (const [province, districts] of Object.entries(data)) {
-    for (const district of districts) {
-      const districtName = Object.keys(district)[0];
-      const sectors = district[districtName];
-
-      for (const sector of sectors) {
-        const sectorName = Object.keys(sector)[0];
-        const cells = sector[sectorName];
-
-        for (const cell of cells) {
-          const cellName = Object.keys(cell)[0];
-          const villages = cell[cellName];
-
-          villages.forEach((village) => {
+  locationData.forEach((provinceObj) => {
+    const province = Object.keys(provinceObj)[0];
+    provinceObj[province].forEach((districtObj) => {
+      const districtName = Object.keys(districtObj)[0];
+      districtObj[districtName].forEach((sectorObj) => {
+        const sectorName = Object.keys(sectorObj)[0];
+        sectorObj[sectorName].forEach((cellObj) => {
+          const cellName = Object.keys(cellObj)[0];
+          cellObj[cellName].forEach((village) => {
             if (village.toLowerCase().includes(searchTerm)) {
               results.push({
                 province,
@@ -260,10 +261,10 @@ export function searchVillages(query: string): VillageLocation[] {
               });
             }
           });
-        }
-      }
-    }
-  }
+        });
+      });
+    });
+  });
 
   return results;
 }
