@@ -125,14 +125,14 @@ export const executeAction = async (
 
         if (SEND_SMS_NOTIFICATIONS) {
           for (const agent of agents) {
-            // const agent = { first_name: "Barack", phone: "0780083122" };
-            const message = translate("alert_sms_message", {
-              id: alert.identifier!,
-              sector: alert.sector!,
-              cell: alert.cell!,
-              village: alert.village!,
-              details: `${incidentCode}, ${affectedCode}, ${genderCode}, ${ageCode}, ${durationCode}`,
-            });
+            const message = `
+Alert ID: ${alert.identifier}
+Sector: ${alert.sector}
+Cell: ${alert.cell}
+Village: ${alert.village}
+Details: ${incidentCode}, ${affectedCode}, ${genderCode}, ${ageCode}, ${durationCode}
+            `;
+            console.log({ message });
             sendSMS(agent.phone, message);
           }
         }

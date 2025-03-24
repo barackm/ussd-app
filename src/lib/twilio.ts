@@ -41,6 +41,8 @@ export const sendSMS = async (to: string, body: string) => {
     }
 
     const data = await response.json();
+    console.log({ data });
+    console.log("SMS sent successfully");
     return data;
   } catch (error) {
     console.error("Failed to send SMS:", error);
