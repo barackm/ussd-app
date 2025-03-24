@@ -53,7 +53,7 @@ export const rw = {
     },
   },
   reportSubmission: {
-    prompt: "Murakoze! Raporo yawe yagejejwe neza.",
+    prompt: "Murakoze! Raporo yawe yoherejwe neza.",
   },
   followUpAlert: {
     prompt: "Andika ID y'amakuru ushaka gukurikirana:",
