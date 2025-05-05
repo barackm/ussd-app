@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "../lib/supabase.ts";
+import { CommunityAgentStatus } from "../types/agents.ts";
 import type { Database } from "../types/types.ts";
 import { normalizeString } from "../utils/string.ts";
 
@@ -10,7 +11,10 @@ const formatPhoneNumber = (phone: string): string => {
 };
 
 export const getAgentByPhoneNumber = async (phoneNumber: string): Promise<Agent | null> => {
-  const { data, error } = await supabaseAdmin.from("community_agents").select("*");
+  const { data, error } = await supabaseAdmin
+    .from("community_agents")
+    .select("*")
+    .eq("status", CommunityAgentStatus.ACTIVE);
 
   if (error) throw error;
 

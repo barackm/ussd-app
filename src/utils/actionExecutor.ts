@@ -39,6 +39,14 @@ async function validateAlertAccess(alertId: number, agentPhone: string): Promise
   const cell = normalizeString(agentLocation.cell);
   const locationMatches = normalizeString(alert.village) === village && normalizeString(alert.cell) === cell;
 
+  console.log({
+    agent,
+    locationMatches,
+    village,
+    cell,
+    alert,
+  });
+
   if (!agent || agent.status !== CommunityAgentStatus.ACTIVE || !locationMatches) {
     return {
       success: false,
@@ -63,7 +71,6 @@ async function validateAlertAccessForHealthFacility(
 
   const healthFacility = await getHealthFacilityByPhone(agentPhone);
   const healthFacilityLocation = JSON.parse(healthFacility?.location?.toString() || "{}");
-
   const locationMatches =
     normalizeString(alert.district) === normalizeString(healthFacilityLocation.district) &&
     normalizeString(alert.sector) === normalizeString(healthFacilityLocation.sector);
